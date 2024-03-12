@@ -37,14 +37,9 @@ public class DlscorridorDemoProviderApplication {
         return x -> {
             RpcRequest rpcRequest = RpcRequest.builder()
                 .service("cn.jamie.discorridor.demo.api.UserService")
-                .methodName("findById/int").args(new Object[]{100}).build();
+                .methodName("findById/long").args(new Object[]{100}).build();
             RpcResponse<?> res = invoke(rpcRequest);
             System.out.println("return res:" + res.getData());
-            RpcRequest rpcRequest2 = RpcRequest.builder()
-                    .service("cn.jamie.discorridor.demo.api.OrderService")
-                    .methodName("findByIds/[I").args(new Object[]{new int[]{1,2}}).build();
-            RpcResponse<?> res2 = invoke(rpcRequest2);
-            System.out.println("return res:" + res2.getData());
 
         };
     }

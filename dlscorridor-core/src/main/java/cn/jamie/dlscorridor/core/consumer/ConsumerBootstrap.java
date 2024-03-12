@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,21 +29,23 @@ public class ConsumerBootstrap implements ApplicationContextAware {
      */
     public void loadConsumerProxy() {
         String[] beanNames = applicationContext.getBeanDefinitionNames();
-        for (String beanName : beanNames) {
-            Object bean = applicationContext.getBean(beanName);
-            List<Field> fields = RpcReflectUtil.findAnnotationFields(bean.getClass(),JMConsumer.class);
-            fields.forEach(f -> {
-                Class<?> service = f.getType();
-                Object consumer = stub.getOrDefault(service.getCanonicalName(),createConsumer(service));
-                f.setAccessible(true);
-                try {
-                    f.set(bean, consumer);
-                    stub.put(service.getCanonicalName(),consumer);
-                } catch (IllegalAccessException e) {
-                  log.error(e.getMessage(),e);
-                }
+        // 扫描服务提供者的类 跳过其他框架的bean
+        Arrays.stream(beanNames).filter(x -> !x.startsWith("java.") && !x.startsWith("org.springframework"))
+            .forEach( beanName ->  {
+                Object bean = applicationContext.getBean(beanName);
+                List<Field> fields = RpcReflectUtil.findAnnotationFields(bean.getClass(),JMConsumer.class);
+                fields.forEach(f -> {
+                    Class<?> service = f.getType();
+                    Object consumer = stub.getOrDefault(service.getCanonicalName(),createConsumer(service));
+                    f.setAccessible(true);
+                    try {
+                        f.set(bean, consumer);
+                        stub.put(service.getCanonicalName(),consumer);
+                    } catch (IllegalAccessException e) {
+                        log.error(e.getMessage(),e);
+                    }
+                });
             });
-        }
     }
 
     private Object createConsumer(Class<?> service) {
