@@ -8,7 +8,7 @@ public class RpcMethodUtil {
     public static Set<String> objectMethodNames = Arrays.stream(Object.class.getDeclaredMethods())
             .map(Method::getName).collect(Collectors.toSet());
 
-    public static boolean filterSuperObjectMethod(String methodName) {
+    public static boolean notPermissionMethod(String methodName) {
         return objectMethodNames.contains(methodName);
     }
 

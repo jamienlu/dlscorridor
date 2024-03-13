@@ -27,12 +27,12 @@ public class JMInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         // Object父类方法禁止远程调用
-        if (RpcMethodUtil.filterSuperObjectMethod(method.getName())) {
+        if (RpcMethodUtil.notPermissionMethod(method.getName())) {
             return null;
         }
         RpcRequest rpcRequest = RpcRequest.builder()
                 .service(service.getCanonicalName())
-                .methodName(RpcReflectUtil.analysisMethodSign(method))
+                .methodSign(RpcReflectUtil.analysisMethodSign(method))
                 .args(args).build();
         RpcResponse rpcResponse = post(rpcRequest);
         if (rpcResponse.isStatus()) {

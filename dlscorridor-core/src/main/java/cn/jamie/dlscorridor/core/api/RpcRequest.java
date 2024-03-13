@@ -15,8 +15,8 @@ public class RpcRequest {
     // 请求接口
     private String service;
     // 请求方法名
-    private String methodName;
-    // 与请求参数一一对应
+    private String methodSign;
+    // not use 与请求参数一一对应代理方法签名
     private List<Class<?>> methodParaTypes;
     // 请求参数
     private Object[] args;

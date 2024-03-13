@@ -4,6 +4,7 @@ import cn.jamie.dlscorridor.core.annotation.JMProvider;
 import cn.jamie.dlscorridor.core.annotation.RpcService;
 import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.api.RpcResponse;
+import cn.jamie.dlscorridor.core.meta.ProviderMeta;
 import cn.jamie.dlscorridor.core.util.RpcMethodUtil;
 import cn.jamie.dlscorridor.core.util.RpcReflectUtil;
 import com.alibaba.fastjson.JSON;
@@ -13,6 +14,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 /**
@@ -25,16 +27,29 @@ import java.util.Map;
 public class ProviderBootstrap implements ApplicationContextAware {
     ApplicationContext applicationContext;
 
-    private Map<String,Object> skeltonMap = new HashMap<>();
+    private Map<String,Map<String, ProviderMeta>> skeltonMap = new HashMap<>();
     @PostConstruct
     /**
      * 映射接口和实现类
      */
-    public void buildProviders() {
-        Map<String,Object> beanMap = applicationContext.getBeansWithAnnotation(JMProvider.class);
-        beanMap.forEach((name,bean) -> System.out.println(name));
-        beanMap.values().forEach(implBean -> RpcReflectUtil.findAnnotationInterfaces(implBean.getClass(), RpcService.class)
-                .forEach(intefaceClass -> skeltonMap.put(intefaceClass.getCanonicalName(),implBean)));
+    public void loadProviders() {
+        // 查找服务提供类
+        Map<String,Object> providerBeanMap = applicationContext.getBeansWithAnnotation(JMProvider.class);
+        // 注入映射的接口和服务提供方法
+        providerBeanMap.values()
+            // 获取提供服务的接口
+            .forEach(providerBean -> RpcReflectUtil.findAnnotationInterfaces(providerBean.getClass(), RpcService.class)
+            // 映射实现类和服务方法
+            .forEach(intefaceClass -> {
+                skeltonMap.putIfAbsent(intefaceClass.getCanonicalName(), new HashMap<>());
+                Map<String, ProviderMeta> skeltonBeanMap = skeltonMap.get(intefaceClass.getCanonicalName());
+            Arrays.stream(providerBean.getClass().getDeclaredMethods())
+                    .filter(method -> !RpcMethodUtil.notPermissionMethod(method.getName()))
+                    .forEach(method -> {
+                        String methodSign = RpcReflectUtil.analysisMethodSign(method);
+                        skeltonBeanMap.put(methodSign, ProviderMeta.builder().methodSign(methodSign).method(method).serviceImpl(providerBean).build());
+                    });
+            }));
     }
 
     /**
@@ -45,21 +60,26 @@ public class ProviderBootstrap implements ApplicationContextAware {
      */
     public RpcResponse<Object> invoke(RpcRequest rpcRequest) {
         RpcResponse<Object> rpcResponse = RpcResponse.builder().build();
-        Object skelton = skeltonMap.get(rpcRequest.getService());
-        Object data = null;
-        try {
-            Method method = RpcReflectUtil.findMethod(skelton.getClass(), rpcRequest.getMethodName());
-            // json 序列化还原  数组和集合类型数据处理
-            Object[] realArgs = new Object[method.getParameterTypes().length];
-            for (int i = 0; i < realArgs.length; i++) {
-                realArgs[i] = JSON.parseObject(JSON.toJSONString(rpcRequest.getArgs()[i]),method.getParameterTypes()[i]);
+        Map<String,ProviderMeta> providerMetaMap = skeltonMap.get(rpcRequest.getService());
+        if (providerMetaMap != null) {
+            ProviderMeta providerMeta = providerMetaMap.get(rpcRequest.getMethodSign());
+            if (providerMeta != null) {
+                Object data = null;
+                Method method = providerMeta.getMethod();
+                // json 序列化还原  数组和集合类型数据处理
+                Object[] realArgs = new Object[method.getParameterTypes().length];
+                for (int i = 0; i < realArgs.length; i++) {
+                    realArgs[i] = JSON.parseObject(JSON.toJSONString(rpcRequest.getArgs()[i]),method.getParameterTypes()[i]);
+                }
+                try {
+                    data = method.invoke(providerMeta.getServiceImpl(), realArgs);
+                    rpcResponse.setData(data);
+                    rpcResponse.setStatus(true);
+                } catch (Exception e) {
+                    rpcResponse.setStatus(false);
+                    rpcResponse.setEx(e);
+                }
             }
-            data = method.invoke(skelton, realArgs);
-            rpcResponse.setData(data);
-            rpcResponse.setStatus(true);
-        } catch (Exception e) {
-            rpcResponse.setStatus(false);
-            rpcResponse.setEx(e);
         }
         return rpcResponse;
     }

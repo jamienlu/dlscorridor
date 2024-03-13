@@ -37,7 +37,7 @@ public class DlscorridorDemoProviderApplication {
         return x -> {
             RpcRequest rpcRequest = RpcRequest.builder()
                 .service("cn.jamie.discorridor.demo.api.UserService")
-                .methodName("findById/long").args(new Object[]{100}).build();
+                .methodSign("findById/long").args(new Object[]{100}).build();
             RpcResponse<?> res = invoke(rpcRequest);
             System.out.println("return res:" + res.getData());
 
