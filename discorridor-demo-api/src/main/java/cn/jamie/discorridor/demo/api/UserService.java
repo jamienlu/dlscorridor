@@ -5,6 +5,6 @@ import java.util.Set;
 
 public interface UserService {
     User findById(long id);
-    User find(Set<Integer> ids);
+    long find(Set<Integer> ids);
     List<User> search(User user);
 }

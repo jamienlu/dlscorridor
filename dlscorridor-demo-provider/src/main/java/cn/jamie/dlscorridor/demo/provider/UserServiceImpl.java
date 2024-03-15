@@ -18,8 +18,8 @@ public class UserServiceImpl implements  @RpcService UserService {
     }
 
     @Override
-    public User find(Set<Integer> ids) {
-        return new User(1, "jamie-findSet<Integer>" + System.currentTimeMillis());
+    public long find(Set<Integer> ids) {
+        return 99l;/*new User(1, "jamie-findSet<Integer>" + System.currentTimeMillis());*/
     }
 
     @Override

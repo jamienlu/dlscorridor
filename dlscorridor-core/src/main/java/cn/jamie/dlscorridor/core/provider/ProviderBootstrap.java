@@ -7,7 +7,7 @@ import cn.jamie.dlscorridor.core.api.RpcResponse;
 import cn.jamie.dlscorridor.core.meta.ProviderMeta;
 import cn.jamie.dlscorridor.core.util.RpcMethodUtil;
 import cn.jamie.dlscorridor.core.util.RpcReflectUtil;
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.context.ApplicationContext;
@@ -69,7 +69,7 @@ public class ProviderBootstrap implements ApplicationContextAware {
                 // json 序列化还原  数组和集合类型数据处理
                 Object[] realArgs = new Object[method.getParameterTypes().length];
                 for (int i = 0; i < realArgs.length; i++) {
-                    realArgs[i] = JSON.parseObject(JSON.toJSONString(rpcRequest.getArgs()[i]),method.getParameterTypes()[i]);
+                    realArgs[i] = JSON.to( method.getParameterTypes()[i],rpcRequest.getArgs()[i]);
                 }
                 try {
                     data = method.invoke(providerMeta.getServiceImpl(), realArgs);

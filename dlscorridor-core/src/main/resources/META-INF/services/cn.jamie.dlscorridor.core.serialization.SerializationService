@@ -1,0 +1,2 @@
+cn.jamie.dlscorridor.core.serialization.FastJsonSerializer
+cn.jamie.dlscorridor.core.serialization.KryoSerializer

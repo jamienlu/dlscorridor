@@ -1,0 +1,2 @@
+serialize:
+  type: fastjson2

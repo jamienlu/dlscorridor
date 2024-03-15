@@ -5,8 +5,7 @@ import cn.jamie.dlscorridor.core.api.RpcResponse;
 import cn.jamie.dlscorridor.core.util.HttpUtil;
 import cn.jamie.dlscorridor.core.util.RpcMethodUtil;
 import cn.jamie.dlscorridor.core.util.RpcReflectUtil;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -36,13 +35,7 @@ public class JMInvocationHandler implements InvocationHandler {
                 .args(args).build();
         RpcResponse rpcResponse = post(rpcRequest);
         if (rpcResponse.isStatus()) {
-            // 成功返回json对象或其他类型
-            if (rpcResponse.getData() instanceof JSONObject) {
-                JSONObject resObject =  (JSONObject) rpcResponse.getData();
-                return JSONObject.toJavaObject(resObject, method.getReturnType());
-            } else {
-                return rpcResponse.getData();
-            }
+            return JSON.to(method.getReturnType(), rpcResponse.getData());
         } else {
             Exception exception = rpcResponse.getEx();
             log.error(exception.getMessage(),exception);
@@ -54,7 +47,7 @@ public class JMInvocationHandler implements InvocationHandler {
         String res = null;
         try {
             res = HttpUtil.postOkHttp("http://localhost:8080/", JSON.toJSONString(rpcRequest));
-            return JSONObject.parseObject(res, RpcResponse.class);
+            return JSON.parseObject(res, RpcResponse.class);
         } catch (IOException e) {
             return RpcResponse.builder().status(false).ex(e).build();
         }

@@ -33,17 +33,19 @@ public class DlscorridorDemoConsumerApplication {
 	@Bean
 	public ApplicationRunner consumerRunner() {
 		return x -> {
-			User user = userService.find(Set.of(1,2));
+			User user = userService.findById(1L);
 			System.out.println(user);
 			Order order = orderService.findById(1);
 			System.out.println(order);
 			List<Order> tt = orderService.findByIds(new int[]{1,2});
 			System.out.println(tt);
-			System.out.println(orderService.findByIds(List.of(1,2)));
+			List<Order> orders = orderService.findByIds(List.of(1,2));
+			System.out.println(orders);
 			System.out.println(orderService.findByIds(new Integer[]{1,2}));;
 			/*System.out.println(orderService.findById(404));*/
 			System.out.println(userService.findById(1L));
 			System.out.println(userService.search(user));
+			System.out.println(userService.find(null));
 		};
 	}
 }
