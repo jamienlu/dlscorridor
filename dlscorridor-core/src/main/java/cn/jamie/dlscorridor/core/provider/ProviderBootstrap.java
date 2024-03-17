@@ -2,6 +2,7 @@ package cn.jamie.dlscorridor.core.provider;
 
 import cn.jamie.dlscorridor.core.annotation.JMProvider;
 import cn.jamie.dlscorridor.core.annotation.RpcService;
+import cn.jamie.dlscorridor.core.api.RegistryCenter;
 import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.api.RpcResponse;
 import cn.jamie.dlscorridor.core.meta.ProviderMeta;
@@ -9,11 +10,15 @@ import cn.jamie.dlscorridor.core.util.RpcMethodUtil;
 import cn.jamie.dlscorridor.core.util.RpcReflectUtil;
 import com.alibaba.fastjson2.JSON;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.Data;
+import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.lang.reflect.Method;
+import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,13 +31,16 @@ import java.util.Map;
 @Data
 public class ProviderBootstrap implements ApplicationContextAware {
     ApplicationContext applicationContext;
-
     private Map<String,Map<String, ProviderMeta>> skeltonMap = new HashMap<>();
+    @Value("${server.port}")
+    private String port;
+    private String instance;
+
     @PostConstruct
     /**
      * 映射接口和实现类
      */
-    public void loadProviders() {
+    public void initProviders() {
         // 查找服务提供类
         Map<String,Object> providerBeanMap = applicationContext.getBeansWithAnnotation(JMProvider.class);
         // 注入映射的接口和服务提供方法
@@ -50,6 +58,25 @@ public class ProviderBootstrap implements ApplicationContextAware {
                         skeltonBeanMap.put(methodSign, ProviderMeta.builder().methodSign(methodSign).method(method).serviceImpl(providerBean).build());
                     });
             }));
+
+    }
+    @SneakyThrows
+    public void startRegistryCenter() {
+        String ip = InetAddress.getLocalHost().getHostAddress();
+        instance = ip + "_" + port;
+        skeltonMap.keySet().forEach(this::registryServer);
+    }
+    @PreDestroy
+    public void unloadRegistryCenter() {
+        skeltonMap.keySet().forEach(this::unregistryServer);
+    }
+    private void unregistryServer(String serverName) {
+        RegistryCenter rc = applicationContext.getBean(RegistryCenter.class);
+        rc.unregister(serverName,instance);
+    }
+    private void registryServer(String serverName) {
+        RegistryCenter rc = applicationContext.getBean(RegistryCenter.class);
+        rc.register(serverName,instance);
     }
 
     /**
