@@ -15,4 +15,8 @@ import org.springframework.context.annotation.PropertySource;
 public class DisCorridorConf {
     @Value("${serialize.type:fastjson}")
     private String serialize;
+    @Value("${loadBalance.type:random}")
+    private String loadBalanceType;
+    @Value("${registryCenter.static.servers:http://localhost:8080}")
+    private String servers;
 }

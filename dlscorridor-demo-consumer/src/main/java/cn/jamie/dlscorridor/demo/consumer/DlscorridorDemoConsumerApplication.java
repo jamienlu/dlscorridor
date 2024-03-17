@@ -5,6 +5,7 @@ import cn.jamie.discorridor.demo.api.OrderService;
 import cn.jamie.discorridor.demo.api.User;
 import cn.jamie.discorridor.demo.api.UserService;
 import cn.jamie.dlscorridor.core.annotation.JMConsumer;
+import cn.jamie.dlscorridor.core.conf.DisCorridorConf;
 import cn.jamie.dlscorridor.core.consumer.ConsumerConfig;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,7 +19,7 @@ import java.util.Set;
 
 @SpringBootApplication
 @RestController
-@Import(ConsumerConfig.class)
+@Import({ConsumerConfig.class, DisCorridorConf.class})
 public class DlscorridorDemoConsumerApplication {
 	@JMConsumer
 	UserService userService;
