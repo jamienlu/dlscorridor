@@ -1,5 +1,7 @@
 package cn.jamie.dlscorridor.core.api;
 
+import cn.jamie.dlscorridor.core.registry.RegistryCenterListener;
+
 import java.util.List;
 
 /**
@@ -14,7 +16,7 @@ public interface RegistryCenter {
     void unregister(String service,String instance);
     //consumer
     List<String> fectchAll(String service);
-    void subscribe();
+    void subscribe(String serviceName, RegistryCenterListener listener);
 
     class StaticRegistrtCenter implements RegistryCenter {
         List<String> providers;
@@ -49,8 +51,8 @@ public interface RegistryCenter {
         }
 
         @Override
-        public void subscribe() {
-
+        public void subscribe(String serviceName, RegistryCenterListener listener) {
+            
         }
     }
 }

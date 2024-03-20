@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 消费者获取服务代理
@@ -38,13 +39,8 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
         Router router = applicationContext.getBean(Router.class);
         LoadBalancer loadBalancer = applicationContext.getBean(LoadBalancer.class);
         RegistryCenter registryCenter = applicationContext.getBean(RegistryCenter.class);
-
         RpcContext rpcContext = RpcContext.builder().router(router).loadBalancer(loadBalancer).build();
-        String urls = environment.getProperty("discorridor.provider.urls","");
 
-        if (Strings.isEmpty(urls)) {
-           log.info("urls is empty");
-        }
         String[] beanNames = applicationContext.getBeanDefinitionNames();
         // 扫描服务提供者的类 跳过其他框架的bean
         Arrays.stream(beanNames).filter(x -> !x.startsWith("java.") && !x.startsWith("org.springframework"))
@@ -66,8 +62,13 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
     }
     private Object createConsumerFromRegistry(Class<?> service, RpcContext rpcContext,RegistryCenter registryCenter) {
         String serviceName = service.getCanonicalName();
-        List<String> providerUrls = registryCenter.fectchAll(serviceName);
-        return createConsumer(service, rpcContext, providerUrls);
+        // 存储的instance是ip_port形式
+        List<String> providers = registryCenter.fectchAll(serviceName);
+        registryCenter.subscribe(serviceName, event -> {
+            providers.clear();
+            providers.addAll(event.getNodes());
+        });
+        return createConsumer(service, rpcContext, providers);
     }
     private Object createConsumer(Class<?> service, RpcContext rpcContext, List<String> urls) {
         return Proxy.newProxyInstance(service.getClassLoader(), new Class[]{service},new JMInvocationHandler(service,rpcContext,urls));

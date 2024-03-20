@@ -6,6 +6,7 @@ import cn.jamie.dlscorridor.core.api.Router;
 import cn.jamie.dlscorridor.core.cluster.RandomLoadBalance;
 import cn.jamie.dlscorridor.core.cluster.RoundLoadBalance;
 import cn.jamie.dlscorridor.core.conf.DisCorridorConf;
+import cn.jamie.dlscorridor.core.registry.ZkRegistryCenter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -16,9 +17,6 @@ import java.util.List;
 
 @Configuration
 public class ConsumerConfig {
-    @Autowired
-    private DisCorridorConf disCorridorConf;
-    String servers;
     @Bean
     ConsumerBootstrap consumerBootstrap() {
         return new ConsumerBootstrap();
@@ -44,6 +42,6 @@ public class ConsumerConfig {
      */
     @Bean(initMethod = "start", destroyMethod = "stop")
     public RegistryCenter consumerRegistryCenter() {
-        return new RegistryCenter.StaticRegistrtCenter(List.of(disCorridorConf.getServers().split(";",-1)));
+        return new ZkRegistryCenter();
     }
 }

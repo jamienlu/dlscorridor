@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 消费这动态代理调用服务提供者
@@ -43,7 +44,8 @@ public class JMInvocationHandler implements InvocationHandler {
                 .args(args).build();
         String url = rpcContext.getLoadBalancer().choose(rpcContext.getRouter().router(urls));
         log.info("real invoke url:" + url);
-        RpcResponse rpcResponse = post(rpcRequest,url);
+
+        RpcResponse rpcResponse = post(rpcRequest,HttpUtil.convertZkInstanceToHttp(url));
         if (rpcResponse.isStatus()) {
             return JSON.to(method.getReturnType(), rpcResponse.getData());
         } else {

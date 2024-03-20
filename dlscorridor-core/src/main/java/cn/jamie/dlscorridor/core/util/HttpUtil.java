@@ -33,4 +33,7 @@ public class HttpUtil {
         return Objects.requireNonNull(OK_HTTP_CLIENT.newCall(request).execute().body()).string();
 
     }
+    public static String convertZkInstanceToHttp(String instanceUrl) {
+        return "http://" + instanceUrl.replace("_",":");
+    }
 }
