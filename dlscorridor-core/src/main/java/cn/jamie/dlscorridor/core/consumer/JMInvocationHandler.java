@@ -5,11 +5,13 @@ import cn.jamie.dlscorridor.core.api.Router;
 import cn.jamie.dlscorridor.core.api.RpcContext;
 import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.api.RpcResponse;
+import cn.jamie.dlscorridor.core.transform.HttpInvoker;
 import cn.jamie.dlscorridor.core.util.HttpUtil;
 import cn.jamie.dlscorridor.core.util.RpcMethodUtil;
 import cn.jamie.dlscorridor.core.util.RpcReflectUtil;
 import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
@@ -31,6 +33,7 @@ public class JMInvocationHandler implements InvocationHandler {
         this.rpcContext = rpcContext;
         this.urls = urls;
     }
+    private HttpInvoker httpInvoker = new HttpInvoker();
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -38,14 +41,16 @@ public class JMInvocationHandler implements InvocationHandler {
         if (RpcMethodUtil.notPermissionMethod(method.getName())) {
             return null;
         }
+        // 组装远程调用参数
         RpcRequest rpcRequest = RpcRequest.builder()
                 .service(service.getCanonicalName())
                 .methodSign(RpcReflectUtil.analysisMethodSign(method))
                 .args(args).build();
+        // 远程调用
         String url = rpcContext.getLoadBalancer().choose(rpcContext.getRouter().router(urls));
         log.info("real invoke url:" + url);
-
-        RpcResponse rpcResponse = post(rpcRequest,HttpUtil.convertZkInstanceToHttp(url));
+        // 处理结果
+        RpcResponse rpcResponse = post(rpcRequest,HttpUtil.convertZkInstanceAddressToHttp(url));
         if (rpcResponse.isStatus()) {
             return JSON.to(method.getReturnType(), rpcResponse.getData());
         } else {
@@ -58,7 +63,7 @@ public class JMInvocationHandler implements InvocationHandler {
     private RpcResponse post(RpcRequest rpcRequest, String url) {
         String res = null;
         try {
-            res = HttpUtil.postOkHttp(url, JSON.toJSONString(rpcRequest));
+            res = httpInvoker.postOkHttp(url, JSON.toJSONString(rpcRequest));
             return JSON.parseObject(res, RpcResponse.class);
         } catch (IOException e) {
             return RpcResponse.builder().status(false).ex(e).build();

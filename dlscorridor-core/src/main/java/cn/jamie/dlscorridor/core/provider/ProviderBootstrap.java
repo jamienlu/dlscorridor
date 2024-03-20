@@ -3,22 +3,18 @@ package cn.jamie.dlscorridor.core.provider;
 import cn.jamie.dlscorridor.core.annotation.JMProvider;
 import cn.jamie.dlscorridor.core.annotation.RpcService;
 import cn.jamie.dlscorridor.core.api.RegistryCenter;
-import cn.jamie.dlscorridor.core.api.RpcRequest;
-import cn.jamie.dlscorridor.core.api.RpcResponse;
 import cn.jamie.dlscorridor.core.meta.ProviderMeta;
 import cn.jamie.dlscorridor.core.util.RpcMethodUtil;
 import cn.jamie.dlscorridor.core.util.RpcReflectUtil;
-import com.alibaba.fastjson2.JSON;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+
 import lombok.Data;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,13 +32,9 @@ public class ProviderBootstrap implements ApplicationContextAware {
     @Value("${server.port}")
     private String port;
     private String instance;
-    @Autowired
     private RegistryCenter registryCenter;
 
     @PostConstruct
-    /**
-     * 映射接口和实现类
-     */
     public void initProviders() {
         // 查找服务提供类
         Map<String,Object> providerBeanMap = applicationContext.getBeansWithAnnotation(JMProvider.class);
@@ -62,55 +54,19 @@ public class ProviderBootstrap implements ApplicationContextAware {
                     });
             }));
 
+
     }
     @SneakyThrows
     public void startRegistryCenter() {
         String ip = InetAddress.getLocalHost().getHostAddress();
         instance = ip + "_" + port;
-        skeltonMap.keySet().forEach(this::registryServer);
+        registryCenter = applicationContext.getBean(RegistryCenter.class);
+        registryCenter.start();
+        skeltonMap.keySet().forEach(serverName -> registryCenter.register(serverName,instance));
     }
     @PreDestroy
-    public void unloadRegistryCenter() {
-        skeltonMap.keySet().forEach(this::unregistryServer);
-    }
-    private void unregistryServer(String serverName) {
-        RegistryCenter rc = applicationContext.getBean(RegistryCenter.class);
-        rc.unregister(serverName,instance);
-    }
-    private void registryServer(String serverName) {
-        RegistryCenter rc = applicationContext.getBean(RegistryCenter.class);
-        rc.register(serverName,instance);
-    }
-
-    /**
-     * 从服务提供者嗲用服务方法
-     *
-     * @param rpcRequest 调用对象
-     * @return RpcResponse 调用结果
-     */
-    public RpcResponse<Object> invoke(RpcRequest rpcRequest) {
-        RpcResponse<Object> rpcResponse = RpcResponse.builder().build();
-        Map<String,ProviderMeta> providerMetaMap = skeltonMap.get(rpcRequest.getService());
-        if (providerMetaMap != null) {
-            ProviderMeta providerMeta = providerMetaMap.get(rpcRequest.getMethodSign());
-            if (providerMeta != null) {
-                Object data = null;
-                Method method = providerMeta.getMethod();
-                // json 序列化还原  数组和集合类型数据处理
-                Object[] realArgs = new Object[method.getParameterTypes().length];
-                for (int i = 0; i < realArgs.length; i++) {
-                    realArgs[i] = JSON.to( method.getParameterTypes()[i],rpcRequest.getArgs()[i]);
-                }
-                try {
-                    data = method.invoke(providerMeta.getServiceImpl(), realArgs);
-                    rpcResponse.setData(data);
-                    rpcResponse.setStatus(true);
-                } catch (Exception e) {
-                    rpcResponse.setStatus(false);
-                    rpcResponse.setEx(e);
-                }
-            }
-        }
-        return rpcResponse;
+    public void destroyRegistryCenter() {
+        skeltonMap.keySet().forEach(serverName -> registryCenter.unregister(serverName,instance));
+        registryCenter.stop();
     }
 }

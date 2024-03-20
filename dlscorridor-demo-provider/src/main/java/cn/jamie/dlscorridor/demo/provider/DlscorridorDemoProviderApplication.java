@@ -4,6 +4,7 @@ import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.api.RpcResponse;
 import cn.jamie.dlscorridor.core.provider.ProviderBootstrap;
 import cn.jamie.dlscorridor.core.provider.ProviderConfig;
+import cn.jamie.dlscorridor.core.provider.ProviderInvoker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -27,10 +28,10 @@ public class DlscorridorDemoProviderApplication {
     @RequestMapping("/")
     public RpcResponse invoke (@RequestBody RpcRequest rpcRequest) {
 
-        return providerBootstrap.invoke(rpcRequest);
+        return providerInvoker.invoke(rpcRequest);
     }
     @Autowired
-    private ProviderBootstrap providerBootstrap;
+    private ProviderInvoker providerInvoker;
 
     @Bean
     public ApplicationRunner getRunner() {

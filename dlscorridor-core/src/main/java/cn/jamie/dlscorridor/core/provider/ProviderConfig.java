@@ -15,11 +15,15 @@ public class ProviderConfig {
         return new ProviderBootstrap();
     }
     @Bean
+    ProviderInvoker providerBootstrap(@Autowired ProviderBootstrap providerBootstrap) {
+        return new ProviderInvoker(providerBootstrap);
+    }
+    @Bean
     @Order(Integer.MIN_VALUE)
     public ApplicationRunner providerStartRegistryCenter(@Autowired ProviderBootstrap providerBootstrap) {
         return x -> providerBootstrap.startRegistryCenter();
     }
-    @Bean(initMethod = "start", destroyMethod = "stop")
+    @Bean
     public RegistryCenter providerRegistryCenter() {
         return new ZkRegistryCenter();
     }
