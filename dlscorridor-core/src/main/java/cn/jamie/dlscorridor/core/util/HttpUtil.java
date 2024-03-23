@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class HttpUtil {
 
-    public static String convertZkInstanceAddressToHttp(String instanceUrl) {
-        return "http://" + instanceUrl.replace("_",":");
+    public static String convertIpAddressToHttp(String url) {
+        return "http://" + url;
     }
 }

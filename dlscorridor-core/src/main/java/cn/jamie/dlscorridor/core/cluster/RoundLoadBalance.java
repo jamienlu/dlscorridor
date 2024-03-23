@@ -1,6 +1,7 @@
 package cn.jamie.dlscorridor.core.cluster;
 
 import cn.jamie.dlscorridor.core.api.LoadBalancer;
+import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RoundLoadBalance implements LoadBalancer {
     AtomicInteger index = new AtomicInteger(0);
     @Override
-    public <T> T choose(List<T> providers) {
+    public InstanceMeta choose(List<InstanceMeta> providers) {
         if (CollectionUtils.isEmpty(providers)) {
             return null;
         } else if (providers.size() == 1) {

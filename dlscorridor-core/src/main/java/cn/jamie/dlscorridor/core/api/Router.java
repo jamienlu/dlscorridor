@@ -1,5 +1,7 @@
 package cn.jamie.dlscorridor.core.api;
 
+import cn.jamie.dlscorridor.core.meta.InstanceMeta;
+
 import java.util.List;
 
 /**
@@ -7,12 +9,12 @@ import java.util.List;
  * @create 2024-03-17
  */
 public interface Router {
-    <T> List<T> router(List<T> providers);
+    List<InstanceMeta> router(List<InstanceMeta> instanceMetas);
 
     Router Default = new Router() {
         @Override
-        public <T> List<T> router(List<T> providers) {
-            return providers;
+        public List<InstanceMeta> router(List<InstanceMeta> instanceMetas) {
+            return instanceMetas;
         }
     };
 }

@@ -1,23 +1,20 @@
 package cn.jamie.dlscorridor.core.consumer;
 
-import cn.jamie.dlscorridor.core.api.LoadBalancer;
-import cn.jamie.dlscorridor.core.api.Router;
 import cn.jamie.dlscorridor.core.api.RpcContext;
 import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.api.RpcResponse;
+import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import cn.jamie.dlscorridor.core.transform.HttpInvoker;
 import cn.jamie.dlscorridor.core.util.HttpUtil;
 import cn.jamie.dlscorridor.core.util.RpcMethodUtil;
 import cn.jamie.dlscorridor.core.util.RpcReflectUtil;
 import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 消费这动态代理调用服务提供者
@@ -26,14 +23,14 @@ import java.util.stream.Collectors;
 public class JMInvocationHandler implements InvocationHandler {
     private Class<?> service;
     private RpcContext rpcContext;
-    private List<String> urls;
+    private List<InstanceMeta> instanceMetas;
 
-    public JMInvocationHandler(Class<?> service, RpcContext rpcContext, List<String> urls) {
+    public JMInvocationHandler(Class<?> service, RpcContext rpcContext, List<InstanceMeta> instanceMetas) {
         this.service = service;
         this.rpcContext = rpcContext;
-        this.urls = urls;
+        this.instanceMetas = instanceMetas;
     }
-    private HttpInvoker httpInvoker = new HttpInvoker();
+    private final HttpInvoker httpInvoker = new HttpInvoker();
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -47,10 +44,10 @@ public class JMInvocationHandler implements InvocationHandler {
                 .methodSign(RpcReflectUtil.analysisMethodSign(method))
                 .args(args).build();
         // 远程调用
-        String url = rpcContext.getLoadBalancer().choose(rpcContext.getRouter().router(urls));
-        log.info("real invoke url:" + url);
+        InstanceMeta instanceMeta = rpcContext.getLoadBalancer().choose(rpcContext.getRouter().router(instanceMetas));
+        log.info("real invoke url:" + instanceMeta.toAddress());
         // 处理结果
-        RpcResponse rpcResponse = post(rpcRequest,HttpUtil.convertZkInstanceAddressToHttp(url));
+        RpcResponse rpcResponse = post(rpcRequest,HttpUtil.convertIpAddressToHttp(instanceMeta.toAddress()));
         if (rpcResponse.isStatus()) {
             return JSON.to(method.getReturnType(), rpcResponse.getData());
         } else {

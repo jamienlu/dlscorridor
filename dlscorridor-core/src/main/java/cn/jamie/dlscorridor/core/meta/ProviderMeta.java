@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.lang.reflect.Method;
 
 /**
- * 服务提供者元数据
+ * 服务提供者元数据 映射关系
  *
  * @author jamieLu
  * @create 2024-03-13
