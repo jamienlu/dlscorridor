@@ -35,6 +35,7 @@ public class RpcFilterChain implements FilterChain {
             // 调用rpc函数
             RpcResponse result = rpcInvoke.apply(rpcRequest);
             RpcUtil.cloneRpcResponse(rpcResponse, result);
+            currentPosition.set(0);
         }
     }
 }

@@ -1,10 +1,25 @@
+### 获取consumer用户信息
+GET http://localhost:8801/?id=101
+### 获取consumer订单信息
+GET http://localhost:8801/order?id=101
+
+### 获取provider用户信息
 POST http://localhost:8080/
 Content-Type: application/json
 
 {
   "service": "cn.jamie.discorridor.demo.api.UserService",
-  "method": "findById",
+  "methodSign": "findById/long",
   "args": [100]
 }
 
-###
+
+### 获取provider订单信息
+POST http://localhost:8080/
+Content-Type: application/json
+
+{
+  "service": "cn.jamie.discorridor.demo.api.OrderService",
+  "methodSign": "findByIds/[I",
+  "args": [[1,2]]
+}

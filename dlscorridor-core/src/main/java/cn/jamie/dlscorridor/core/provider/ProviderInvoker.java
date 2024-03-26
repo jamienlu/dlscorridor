@@ -37,7 +37,7 @@ public class ProviderInvoker {
                 // json 序列化还原  数组和集合类型数据处理
                 Object[] realArgs = new Object[method.getParameterTypes().length];
                 for (int i = 0; i < realArgs.length; i++) {
-                    realArgs[i] = JSON.to( method.getParameterTypes()[i],rpcRequest.getArgs()[i]);
+                    realArgs[i] = JSON.to(method.getParameterTypes()[i],rpcRequest.getArgs()[i]);
                 }
                 try {
                     data = method.invoke(providerMeta.getServiceImpl(), realArgs);
