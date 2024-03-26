@@ -3,17 +3,23 @@ package cn.jamie.dlscorridor.core.consumer;
 import cn.jamie.dlscorridor.core.api.RpcContext;
 import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.api.RpcResponse;
+import cn.jamie.dlscorridor.core.filter.CacheFilter;
+import cn.jamie.dlscorridor.core.filter.FilterChain;
+import cn.jamie.dlscorridor.core.filter.RpcFilterChain;
 import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import cn.jamie.dlscorridor.core.transform.HttpInvoker;
 import cn.jamie.dlscorridor.core.util.HttpUtil;
 import cn.jamie.dlscorridor.core.util.RpcMethodUtil;
 import cn.jamie.dlscorridor.core.util.RpcReflectUtil;
+import cn.jamie.dlscorridor.core.util.RpcUtil;
 import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -40,14 +46,11 @@ public class JMInvocationHandler implements InvocationHandler {
         }
         // 组装远程调用参数
         RpcRequest rpcRequest = RpcRequest.builder()
-                .service(service.getCanonicalName())
-                .methodSign(RpcReflectUtil.analysisMethodSign(method))
-                .args(args).build();
-        // 远程调用
-        InstanceMeta instanceMeta = rpcContext.getLoadBalancer().choose(rpcContext.getRouter().router(instanceMetas));
-        log.info("real invoke url:" + instanceMeta.toAddress());
-        // 处理结果
-        RpcResponse rpcResponse = post(rpcRequest,HttpUtil.convertIpAddressToHttp(instanceMeta.toAddress()));
+            .service(service.getCanonicalName())
+            .methodSign(RpcReflectUtil.analysisMethodSign(method))
+            .args(args).build();
+        RpcResponse rpcResponse = RpcResponse.builder().status(false).data(null).build();
+        rpcContext.getFilterChain().doFilter(rpcRequest, rpcResponse, this::handler);
         if (rpcResponse.isStatus()) {
             return JSON.to(method.getReturnType(), rpcResponse.getData());
         } else {
@@ -56,7 +59,13 @@ public class JMInvocationHandler implements InvocationHandler {
             throw exception;
         }
     }
-    //
+    private RpcResponse handler(RpcRequest rpcRequest) {
+        // 远程调用路由
+        InstanceMeta instanceMeta = rpcContext.getLoadBalancer().choose(rpcContext.getRouter().router(instanceMetas));
+        log.info("real invoke url:" + instanceMeta.toAddress());
+        return post(rpcRequest,HttpUtil.convertIpAddressToHttp(instanceMeta.toAddress()));
+    }
+
     private RpcResponse post(RpcRequest rpcRequest, String url) {
         String res = null;
         try {

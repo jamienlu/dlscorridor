@@ -1,5 +1,7 @@
 package cn.jamie.dlscorridor.core.api;
 
+import cn.jamie.dlscorridor.core.filter.Filter;
+import cn.jamie.dlscorridor.core.filter.FilterChain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RpcContext {
-    private List<Filter> filters;
+    private FilterChain filterChain;
     private Router router;
     private LoadBalancer loadBalancer;
 }

@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+cn.jamie.discorridor.spring.boot.autoconfigure.DiscorridorAutoConfigure,\
+cn.jamie.discorridor.spring.boot.autoconfigure.ProviderAutoConfigure,\
+cn.jamie.discorridor.spring.boot.autoconfigure.ConsumerAutoConfigure

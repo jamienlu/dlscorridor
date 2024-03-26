@@ -17,9 +17,9 @@ import java.util.concurrent.TimeUnit;
 public class HttpInvoker {
     private final static MediaType JSON_TYPE = MediaType.get("application/json; charset=utf-8");
     private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient.Builder().connectionPool(new ConnectionPool(16,60, TimeUnit.SECONDS))
-            .readTimeout(1,TimeUnit.SECONDS)
-            .writeTimeout(1,TimeUnit.SECONDS)
-            .connectTimeout(1,TimeUnit.SECONDS)
+            .readTimeout(100,TimeUnit.SECONDS)
+            .writeTimeout(100,TimeUnit.SECONDS)
+            .connectTimeout(100,TimeUnit.SECONDS)
             .build();
     public String postOkHttp(String url, String body) throws IOException {
         Request request = new Request.Builder()

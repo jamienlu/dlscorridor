@@ -3,3 +3,6 @@ server:
 discorridor:
   provider:
     urls: http://192.168.0.100:8080;http://192.168.0.100:8081
+logging:
+  level:
+    root: info

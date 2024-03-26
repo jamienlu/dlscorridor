@@ -2,6 +2,10 @@ package cn.jamie.dlscorridor.core.consumer;
 
 import cn.jamie.dlscorridor.core.annotation.JMConsumer;
 import cn.jamie.dlscorridor.core.api.LoadBalancer;
+import cn.jamie.dlscorridor.core.filter.CacheFilter;
+import cn.jamie.dlscorridor.core.filter.FilterChain;
+import cn.jamie.dlscorridor.core.filter.RpcFilterChain;
+import cn.jamie.dlscorridor.core.filter.TokenFilter;
 import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import cn.jamie.dlscorridor.core.meta.ServiceMeta;
 import cn.jamie.dlscorridor.core.registry.RegistryCenter;
@@ -44,7 +48,10 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
     public void loadConsumerProxy() {
         Router router = applicationContext.getBean(Router.class);
         LoadBalancer loadBalancer = applicationContext.getBean(LoadBalancer.class);
-        RpcContext rpcContext = RpcContext.builder().router(router).loadBalancer(loadBalancer).build();
+        FilterChain filterChain = new RpcFilterChain();
+        filterChain.addFilter(new TokenFilter(100, 1));
+        filterChain.addFilter(new CacheFilter());
+        RpcContext rpcContext = RpcContext.builder().router(router).filterChain(filterChain).loadBalancer(loadBalancer).build();
         RegistryCenter registryCenter = applicationContext.getBean(RegistryCenter.class);
         serviceMeta = applicationContext.getBean(ServiceMeta.class);
         String[] beanNames = applicationContext.getBeanDefinitionNames();
