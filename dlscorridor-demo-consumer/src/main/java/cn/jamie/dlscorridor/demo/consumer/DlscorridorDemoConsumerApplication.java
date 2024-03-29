@@ -5,28 +5,22 @@ import cn.jamie.discorridor.demo.api.OrderService;
 import cn.jamie.discorridor.demo.api.User;
 import cn.jamie.discorridor.demo.api.UserService;
 import cn.jamie.dlscorridor.core.annotation.JMConsumer;
-import cn.jamie.dlscorridor.core.conf.DisCorridorConf;
-import cn.jamie.dlscorridor.core.consumer.ConsumerConfig;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Set;
 
 @SpringBootApplication
 @RestController
-@Import({ConsumerConfig.class, DisCorridorConf.class})
 public class DlscorridorDemoConsumerApplication {
-	@JMConsumer
+	@JMConsumer(service = "discorridor-provider", version = "1.0.0")
 	UserService userService;
-	@JMConsumer
+	@JMConsumer(service = "discorridor-provider", version = "1.0.0")
 	OrderService orderService;
 
 	public static void main(String[] args) {

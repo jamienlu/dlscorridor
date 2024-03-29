@@ -4,7 +4,7 @@ GET http://localhost:8801/?id=101
 GET http://localhost:8801/order?id=101
 
 ### 获取provider用户信息
-POST http://localhost:8080/
+POST http://localhost:8080/rpc/services
 Content-Type: application/json
 
 {

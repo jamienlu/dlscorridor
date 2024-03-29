@@ -7,6 +7,6 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 @Inherited
 public @interface JMConsumer {
-    String service() default "";
+    String service();
     String version() default "";
 }

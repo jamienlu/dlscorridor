@@ -2,19 +2,16 @@ package cn.jamie.dlscorridor.core.consumer;
 
 import cn.jamie.dlscorridor.core.annotation.JMConsumer;
 import cn.jamie.dlscorridor.core.api.LoadBalancer;
-import cn.jamie.dlscorridor.core.filter.CacheFilter;
 import cn.jamie.dlscorridor.core.filter.FilterChain;
-import cn.jamie.dlscorridor.core.filter.RpcFilterChain;
-import cn.jamie.dlscorridor.core.filter.TokenFilter;
 import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import cn.jamie.dlscorridor.core.meta.ServiceMeta;
 import cn.jamie.dlscorridor.core.registry.RegistryCenter;
 import cn.jamie.dlscorridor.core.api.Router;
 import cn.jamie.dlscorridor.core.api.RpcContext;
-import cn.jamie.dlscorridor.core.registry.zookeeper.ZkRegistryCenterAdapter;
-import cn.jamie.dlscorridor.core.registry.zookeeper.ZkRegistryCenterListener;
 import cn.jamie.dlscorridor.core.util.RpcReflectUtil;
 import com.alibaba.fastjson2.JSON;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -39,55 +36,67 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
     ApplicationContext applicationContext;
     Environment environment;
     private Map<String,Object> stub = new HashMap<>();
-    private ZkRegistryCenterAdapter zkRegistryCenterAdapter;
-    private ZkRegistryCenterListener zkRegistryCenterListener;
     private ServiceMeta serviceMeta;
+    private RegistryCenter registryCenter;
+    private FilterChain filterChain;
     /**
      * 解析消费者中需要服务提供者提供注入的服务实例
      */
-    public void loadConsumerProxy() {
+    public void initStubs() {
+        // 识别注册中心类型 这里确定是zk
+        registryCenter = applicationContext.getBean(RegistryCenter.class);
+        serviceMeta = applicationContext.getBean(ServiceMeta.class);
+        // rpc配置参数
         Router router = applicationContext.getBean(Router.class);
         LoadBalancer loadBalancer = applicationContext.getBean(LoadBalancer.class);
-        FilterChain filterChain = new RpcFilterChain();
-        filterChain.addFilter(new TokenFilter(100, 1));
-        filterChain.addFilter(new CacheFilter());
+        FilterChain filterChain = applicationContext.getBean(FilterChain.class);
         RpcContext rpcContext = RpcContext.builder().router(router).filterChain(filterChain).loadBalancer(loadBalancer).build();
-        RegistryCenter registryCenter = applicationContext.getBean(RegistryCenter.class);
-        serviceMeta = applicationContext.getBean(ServiceMeta.class);
+        // 扫描类中使用服务提供者的属性
         String[] beanNames = applicationContext.getBeanDefinitionNames();
-        // 识别注册中心类型 这里确定是zk
-        zkRegistryCenterListener = applicationContext.getBean(ZkRegistryCenterListener.class);
-        zkRegistryCenterAdapter = new ZkRegistryCenterAdapter(registryCenter);
-        zkRegistryCenterAdapter.addListener(zkRegistryCenterListener);
         // 扫描服务提供者的类 跳过其他框架的bean
         Arrays.stream(beanNames).filter(x -> !x.startsWith("java.") && !x.startsWith("org.springframework"))
-            .forEach( beanName ->  {
+            .forEach(beanName -> {
                 Object bean = applicationContext.getBean(beanName);
                 List<Field> fields = RpcReflectUtil.findAnnotationFields(bean.getClass(),JMConsumer.class);
-                fields.forEach(f -> {
-                    Class<?> service = f.getType();
-                    Object consumer = stub.computeIfAbsent(service.getCanonicalName(),key -> createConsumerFromRegistry(service, rpcContext));
-                    f.setAccessible(true);
+                fields.forEach(field -> {
+                    Class<?> service = field.getType();
+                    Object consumer = stub.computeIfAbsent(service.getCanonicalName(),
+                        key -> createConsumerFromRegistry(service, buildStubServiceMeta(field.getAnnotation(JMConsumer.class), service.getCanonicalName()), rpcContext));
+                    field.setAccessible(true);
                     try {
-                        f.set(bean, consumer);
+                        field.set(bean, consumer);
                     } catch (IllegalAccessException e) {
                         log.error(e.getMessage(),e);
                     }
                 });
             });
 
+
     }
-    private Object createConsumerFromRegistry(Class<?> service, RpcContext rpcContext) {
-        // 存储的instance是ip_port形式
+    public ServiceMeta buildStubServiceMeta(JMConsumer jmConsumer, String serviceName) {
         ServiceMeta target = new ServiceMeta();
         BeanUtils.copyProperties(serviceMeta, target);
-        target.setName(service.getName());
-        zkRegistryCenterAdapter.subscribe(target);
-        List<InstanceMeta> instanceMetas = zkRegistryCenterListener.fetchInstanceMetas(target);
+        target.setApp(jmConsumer.service());
+        target.setName(serviceName);
+        target.setVersion(jmConsumer.version());
+        return target;
+    }
+    private Object createConsumerFromRegistry(Class<?> service, ServiceMeta serviceMeta, RpcContext rpcContext) {
+        registryCenter.subscribe(serviceMeta);
+        List<InstanceMeta> instanceMetas = registryCenter.fectchAll(serviceMeta);
         log.info("current service instance" + JSON.toJSONString(instanceMetas));
         return createConsumer(service, rpcContext, instanceMetas);
     }
     private Object createConsumer(Class<?> service, RpcContext rpcContext, List<InstanceMeta> instanceMetas) {
         return Proxy.newProxyInstance(service.getClassLoader(), new Class[]{service},new JMInvocationHandler(service,rpcContext,instanceMetas));
+    }
+
+    public void destroy() {
+        stub.keySet().forEach(serviceName -> {
+            ServiceMeta target = new ServiceMeta();
+            BeanUtils.copyProperties(serviceMeta, target);
+            target.setName(serviceName);
+            registryCenter.unsubscribe(target);
+        });
     }
 }

@@ -3,6 +3,7 @@ package cn.jamie.dlscorridor.core.registry.zookeeper;
 import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import cn.jamie.dlscorridor.core.meta.ServiceMeta;
 import cn.jamie.dlscorridor.core.registry.RegistryCenterListener;
+import cn.jamie.dlscorridor.core.registry.RegistryStorage;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
@@ -19,28 +20,30 @@ import java.util.Map;
  */
 @Slf4j
 public class ZkRegistryCenterListener implements RegistryCenterListener {
-    private final Map<String,ServiceMeta> registryServiceMetas = new HashMap<>();
-    private final Map<String, List<InstanceMeta>> serverInstanceMetas = new HashMap<>();
+    private final RegistryStorage registryStorage;
+
+    public ZkRegistryCenterListener(RegistryStorage registryStorage) {
+        this.registryStorage = registryStorage;
+    }
 
     @Override
     public void onRegistry(ServiceMeta serviceMeta) {
         String serverPath = serviceMeta.toPath();
         log.info("watch zkClient registry serviceMeta:" + serverPath);
-        registryServiceMetas.putIfAbsent(serverPath, serviceMeta);
+        registryStorage.saveServiceMeta(serviceMeta);
     }
 
     @Override
     public void onUnRegistry(ServiceMeta serviceMeta) {
         String serverPath = serviceMeta.toPath();
         log.info("watch zkClient unregistry serviceMeta:" + serverPath);
-        registryServiceMetas.remove(serverPath);
+        registryStorage.removeServiceMeta(serverPath);
     }
 
     @Override
     public void onSubscribe(ServiceMeta serviceMeta, List<InstanceMeta> instanceMetas) {
-        String serverPath = serviceMeta.toPath();
-        log.info("watch zkClient subscribe serviceMeta:" + serverPath);
-        serverInstanceMetas.put(serverPath, instanceMetas);
+        log.info("watch zkClient subscribe serviceMeta path:" + serviceMeta.toPath());
+        registryStorage.saveServiceInstanceMetas(serviceMeta, instanceMetas);
     }
 
 
@@ -48,20 +51,6 @@ public class ZkRegistryCenterListener implements RegistryCenterListener {
     public void onUnSubscribe(ServiceMeta serviceMeta) {
         String serverPath = serviceMeta.toPath();
         log.info("watch zkClient unsubscribe serviceMeta:" + serverPath);
-        serverInstanceMetas.remove(serverPath);
-    }
-
-    /**
-     * 可以从自己监听的服务获取实例数据
-     *
-     * @param serviceMeta 服务元数据
-     * @return List<InstanceMeta>
-     */
-    public List<InstanceMeta> fetchInstanceMetas(ServiceMeta serviceMeta) {
-        return serverInstanceMetas.get(serviceMeta.toPath());
-    }
-
-    public List<ServiceMeta> fetchAllServicetas() {
-        return registryServiceMetas.values().stream().toList();
+        registryStorage.removeServiceMeta(serverPath);
     }
 }

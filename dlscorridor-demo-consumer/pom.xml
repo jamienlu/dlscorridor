@@ -39,7 +39,7 @@
 		</dependency>
 		<dependency>
 			<groupId>cn.jamie</groupId>
-			<artifactId>dlscorridor-core</artifactId>
+			<artifactId>discorridor-spring-boot-autoconfigure</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

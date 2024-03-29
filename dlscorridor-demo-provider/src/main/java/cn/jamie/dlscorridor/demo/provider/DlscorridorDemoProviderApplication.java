@@ -2,24 +2,28 @@ package cn.jamie.dlscorridor.demo.provider;
 
 import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.api.RpcResponse;
-import cn.jamie.dlscorridor.core.provider.ProviderBootstrap;
-import cn.jamie.dlscorridor.core.provider.ProviderConfig;
+import cn.jamie.dlscorridor.core.meta.InstanceMeta;
+import cn.jamie.dlscorridor.core.meta.ServiceMeta;
 import cn.jamie.dlscorridor.core.provider.ProviderInvoker;
+import cn.jamie.dlscorridor.core.provider.ProviderStorage;
+import cn.jamie.dlscorridor.core.registry.RegistryCenter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
 @RestController
-@Import(ProviderConfig.class)
 public class DlscorridorDemoProviderApplication {
-
+    @Autowired
+    private ApplicationContext applicationContext;
+    @Autowired
+    private ProviderInvoker providerInvoker;
     public static void main(String[] args) {
         SpringApplication.run(DlscorridorDemoProviderApplication.class, args);
     }
@@ -30,8 +34,7 @@ public class DlscorridorDemoProviderApplication {
 
         return providerInvoker.invoke(rpcRequest);
     }
-    @Autowired
-    private ProviderInvoker providerInvoker;
+
 
     @Bean
     public ApplicationRunner getRunner() {
@@ -41,7 +44,6 @@ public class DlscorridorDemoProviderApplication {
                 .methodSign("findById/long").args(new Object[]{100}).build();
             RpcResponse<?> res = invoke(rpcRequest);
             System.out.println("return res:" + res.getData());
-
         };
     }
 

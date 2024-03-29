@@ -24,13 +24,8 @@
         </dependencies>
     </dependencyManagement>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-    </dependencies>
     <modules>
         <module>discorridor-spring-boot-autoconfigure</module>
     </modules>
+
 </project>

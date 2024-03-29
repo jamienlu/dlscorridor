@@ -4,6 +4,7 @@ import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import cn.jamie.dlscorridor.core.meta.ServiceMeta;
 import cn.jamie.dlscorridor.core.registry.RegistryCenter;
 import cn.jamie.dlscorridor.core.registry.RegistryCenterListener;
+import cn.jamie.dlscorridor.core.registry.RegistryStorage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.curator.framework.CuratorFramework;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 public class ZkRegistryCenter implements RegistryCenter {
     private CuratorFramework client;
     private final ZkEnvData zkEnvData;
+    private final RegistryStorage registryStorage;
     private final List<RegistryCenterListener> listeners = new ArrayList<>();
     private final Map<String, CuratorCache> serverCuratorCaches = new HashMap<>();
     public void addListener(RegistryCenterListener listener) {
@@ -39,8 +41,11 @@ public class ZkRegistryCenter implements RegistryCenter {
         }
     }
 
-    public ZkRegistryCenter(ZkEnvData zkEnvData) {
+    public ZkRegistryCenter(ZkEnvData zkEnvData,RegistryStorage registryStorage) {
         this.zkEnvData = zkEnvData;
+        this.registryStorage = registryStorage;
+        // 初始化默认创建一个监听器用来传递注册和订阅的数据
+        listeners.add(new ZkRegistryCenterListener(registryStorage));
     }
 
     @Override
@@ -57,6 +62,8 @@ public class ZkRegistryCenter implements RegistryCenter {
         log.info("prepare destroy zk registryCenter");
         // 关闭连接
         client.close();
+        // 清理注册和订阅内容(反注册和反订阅已清理)
+        registryStorage.cleanUp();
         log.info("zk registryCenter stopted");
     }
 
@@ -100,8 +107,8 @@ public class ZkRegistryCenter implements RegistryCenter {
         }
     }
 
-    @Override
-    public List<InstanceMeta> fectchAll(ServiceMeta service) {
+
+    public List<InstanceMeta> fectchZkInstanceMetas(ServiceMeta service) {
         String serverPath = "/" + service.toPath();
         List<InstanceMeta> nodes = null;
         try {
@@ -115,11 +122,15 @@ public class ZkRegistryCenter implements RegistryCenter {
         }
         return nodes;
     }
+    @Override
+    public List<InstanceMeta> fectchAll(ServiceMeta service) {
+        return registryStorage.searchInstanceMetas(service.toPath());
+    }
 
     @Override
     public void subscribe(ServiceMeta service) {
         // 初始拉一次订阅数据数据
-        listenerEvent(event -> event.onSubscribe(service, fectchAll(service)));
+        listenerEvent(event -> event.onSubscribe(service, fectchZkInstanceMetas(service)));
 
         String serverPath = "/" + service.toPath();
         // 订阅zk节点
@@ -133,7 +144,7 @@ public class ZkRegistryCenter implements RegistryCenter {
                         log.info("change node new node:" + newNode.getPath());
                     }
                     // 订阅后需要把数据更新传递给监听器处理
-                    List<InstanceMeta> instanceMetas = fectchAll(service);
+                    List<InstanceMeta> instanceMetas = fectchZkInstanceMetas(service);
                     listenerEvent(event -> event.onSubscribe(service, instanceMetas));
                 } )
                 .build();

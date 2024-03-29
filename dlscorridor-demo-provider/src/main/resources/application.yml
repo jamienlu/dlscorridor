@@ -1,2 +1,19 @@
 server:
   port: 8080
+discorridor:
+  env:
+    app: discorridor-provider
+    namespace: public
+    env: dev
+    name: provider-v1
+    version: 1.0.0
+  registry:
+    env:
+      namespace: public
+      url: 192.168.0.101:2181
+      over-time: 1000
+      retry-count: 3
+  provider:
+    enable: true
+
+

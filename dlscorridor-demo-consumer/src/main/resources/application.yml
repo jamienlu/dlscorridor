@@ -1,8 +1,22 @@
 server:
   port: 8801
 discorridor:
-  provider:
-    urls: http://192.168.0.100:8080;http://192.168.0.100:8081
-logging:
-  level:
-    root: info
+  env:
+    app: discorridor-customer
+    namespace: public
+    env: dev
+    name: customer-v1
+    version: 1.0.0
+  registry:
+    env:
+      namespace: public
+      url: 192.168.0.101:2181
+      over-time: 1000
+      retry-count: 3
+  consumer:
+    enable: true
+    env:
+      route: default
+      filters: token;cache
+      loadbalance: round
+

@@ -1,0 +1,4 @@
+cn.jamie.discorridor.spring.boot.autoconfigure.DiscorridorAutoConfigure
+cn.jamie.discorridor.spring.boot.autoconfigure.RegistryConfiguration
+cn.jamie.discorridor.spring.boot.autoconfigure.ProviderAutoConfigure
+cn.jamie.discorridor.spring.boot.autoconfigure.ConsumerAutoConfigure

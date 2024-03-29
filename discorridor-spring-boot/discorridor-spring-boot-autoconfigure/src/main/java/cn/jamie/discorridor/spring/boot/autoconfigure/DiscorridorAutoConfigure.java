@@ -1,27 +1,28 @@
 package cn.jamie.discorridor.spring.boot.autoconfigure;
 
-import cn.jamie.dlscorridor.core.api.ServiceEnv;
-import org.springframework.beans.factory.annotation.Value;
+import cn.jamie.discorridor.spring.boot.autoconfigure.bean.AppEnv;
+import cn.jamie.dlscorridor.core.meta.ServiceMeta;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
+
+import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.DISCORRIDOR_PREFIX;
 
 /**
  * @author jamieLu
  * @create 2024-03-25
  */
-@Component
+@Configuration
+@ConfigurationProperties(prefix = DISCORRIDOR_PREFIX)
+@Data
 public class DiscorridorAutoConfigure {
-    @Value("${discorridor.env}")
-    private String env;
-    @Value("${discorridor.namespace}")
-    private String namespace;
-    @Value("${discorridor.app.id}")
-    private String app;
-    @Value("${discorridor.app.version}")
-    private String version;
+    @NestedConfigurationProperty
+    private AppEnv env;
     @Bean
-    public ServiceEnv serviceEnv(){
-        return ServiceEnv.builder().app(app).env(env).namespace(namespace).version(version).build();
-    };
-
+    public ServiceMeta serviceMeta() {
+        return ServiceMeta.builder().app(env.getApp()).namespace(env.getNamespace()).env(env.getEnv()).name(env.getName()).version(env.getVersion())
+                .build();
+    }
 }
