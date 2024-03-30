@@ -11,10 +11,5 @@ import java.util.List;
 public interface Router {
     List<InstanceMeta> router(List<InstanceMeta> instanceMetas);
 
-    Router Default = new Router() {
-        @Override
-        public List<InstanceMeta> router(List<InstanceMeta> instanceMetas) {
-            return instanceMetas;
-        }
-    };
+    Router Default = instanceMetas -> instanceMetas;
 }

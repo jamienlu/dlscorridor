@@ -10,15 +10,12 @@ import cn.jamie.dlscorridor.core.api.Router;
 import cn.jamie.dlscorridor.core.api.RpcContext;
 import cn.jamie.dlscorridor.core.util.RpcReflectUtil;
 import com.alibaba.fastjson2.JSON;
-import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
@@ -32,9 +29,8 @@ import java.util.Map;
  */
 @Data
 @Slf4j
-public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAware {
+public class ConsumerBootstrap implements ApplicationContextAware {
     ApplicationContext applicationContext;
-    Environment environment;
     private Map<String,Object> stub = new HashMap<>();
     private ServiceMeta serviceMeta;
     private RegistryCenter registryCenter;
@@ -70,10 +66,16 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
                     }
                 });
             });
-
-
     }
-    public ServiceMeta buildStubServiceMeta(JMConsumer jmConsumer, String serviceName) {
+
+    /**
+     * 构建消费者使用的服务提供者信息
+     *
+     * @param jmConsumer 消费者注解
+     * @param serviceName 消费服务的接口名
+     * @return ServiceMeta
+     */
+    private ServiceMeta buildStubServiceMeta(JMConsumer jmConsumer, String serviceName) {
         ServiceMeta target = new ServiceMeta();
         BeanUtils.copyProperties(serviceMeta, target);
         target.setApp(jmConsumer.service());
@@ -91,12 +93,22 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
         return Proxy.newProxyInstance(service.getClassLoader(), new Class[]{service},new JMInvocationHandler(service,rpcContext,instanceMetas));
     }
 
+    /**
+     * 反订阅
+     */
+    @PreDestroy
     public void destroy() {
+        if (log.isDebugEnabled()) {
+            log.debug("prepare destroy instances" + registryCenter.fectchAll(serviceMeta));
+        }
         stub.keySet().forEach(serviceName -> {
             ServiceMeta target = new ServiceMeta();
             BeanUtils.copyProperties(serviceMeta, target);
             target.setName(serviceName);
             registryCenter.unsubscribe(target);
         });
+        if (log.isDebugEnabled()) {
+            log.debug("after destroy instances" + registryCenter.fectchAll(serviceMeta));
+        }
     }
 }

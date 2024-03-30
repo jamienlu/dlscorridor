@@ -1,13 +1,10 @@
 package cn.jamie.dlscorridor.core.api;
 
-import cn.jamie.dlscorridor.core.filter.Filter;
 import cn.jamie.dlscorridor.core.filter.FilterChain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 /**
  * @author jamieLu
@@ -18,7 +15,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RpcContext {
+    // 过滤器链
     private FilterChain filterChain;
+    // 路由
     private Router router;
+    // 负载均衡器选择
     private LoadBalancer loadBalancer;
 }

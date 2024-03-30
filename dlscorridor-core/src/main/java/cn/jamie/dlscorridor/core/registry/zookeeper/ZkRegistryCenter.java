@@ -5,6 +5,8 @@ import cn.jamie.dlscorridor.core.meta.ServiceMeta;
 import cn.jamie.dlscorridor.core.registry.RegistryCenter;
 import cn.jamie.dlscorridor.core.registry.RegistryCenterListener;
 import cn.jamie.dlscorridor.core.registry.RegistryStorage;
+import cn.jamie.dlscorridor.core.util.VersionUtil;
+import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.curator.framework.CuratorFramework;
@@ -17,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * @author jamieLu
@@ -76,8 +77,13 @@ public class ZkRegistryCenter implements RegistryCenter {
                 client.create().withMode(CreateMode.PERSISTENT).forPath(serverPath,"service".getBytes());
                 log.info("create zk registry server path:" + serverPath);
             }
+            String versionPath = serverPath + "/" + service.getVersion();
+            if(client.checkExists().forPath(versionPath) == null) {
+                client.create().withMode(CreateMode.PERSISTENT).forPath(versionPath,"version".getBytes());
+                log.info("create zk registry server path:" + versionPath);
+            }
             // 创建实例的临时节点
-            String instancePath = serverPath + "/" + instance.toPath();
+            String instancePath = versionPath + "/" + instance.toPath();
             client.create().withMode(CreateMode.EPHEMERAL).forPath(instancePath,"provider".getBytes());
             log.info("create zk registry instance path:" + instancePath);
         } catch (Exception e) {
@@ -96,8 +102,12 @@ public class ZkRegistryCenter implements RegistryCenter {
             if(client.checkExists().forPath(serverPath) == null) {
                 return;
             }
+            String versionPath = serverPath + "/" + service.getVersion();
+            if(client.checkExists().forPath(versionPath) == null) {
+                return;
+            }
             // 删除实例的临时节点
-            String instancePath = serverPath + "/" + instance.toPath();
+            String instancePath = versionPath + "/" + instance.toPath();
             log.info("remove zk registry instance path:" + instancePath);
             client.delete().quietly().forPath(instancePath);
         } catch (Exception e) {
@@ -108,27 +118,34 @@ public class ZkRegistryCenter implements RegistryCenter {
     }
 
 
-    public List<InstanceMeta> fectchZkInstanceMetas(ServiceMeta service) {
+    private Map<String,List<InstanceMeta>> fectchZkInstanceMetas(ServiceMeta service) {
+        Map<String,List<InstanceMeta>> result = new HashMap<>();
         String serverPath = "/" + service.toPath();
-        List<InstanceMeta> nodes = null;
         try {
-            nodes = client.getChildren().forPath(serverPath).stream()
-                .map(InstanceMeta::pathToInstance)
-                .collect(Collectors.toList());
-            log.info("find zk nodes:" + nodes);
+            List<String> versions = client.getChildren().forPath(serverPath).stream().toList();
+            for (String version : versions) {
+                // 你需要的版本应该<=服务列表里的版本
+                if (VersionUtil.compareVersion(service.getVersion(), version) <= 0) {
+                    List<InstanceMeta> nodes = client.getChildren().forPath(serverPath + "/" + version).stream()
+                        .map(InstanceMeta::pathToInstance).toList();
+                    log.debug("real fetch path version" + service.toPath() + ":" + version + "##size:" + nodes.size());
+                    result.put(version, nodes);
+                }
+            }
         } catch (Exception e) {
             log.error(e.getMessage(),e);
             throw new RuntimeException(e);
         }
-        return nodes;
+        return result;
     }
     @Override
     public List<InstanceMeta> fectchAll(ServiceMeta service) {
-        return registryStorage.searchInstanceMetas(service.toPath());
+        return registryStorage.searchInstanceMetas(service);
     }
 
     @Override
     public void subscribe(ServiceMeta service) {
+        log.debug("prepare subscribe stub " + JSON.toJSONString(service));
         // 初始拉一次订阅数据数据
         listenerEvent(event -> event.onSubscribe(service, fectchZkInstanceMetas(service)));
 
@@ -144,7 +161,7 @@ public class ZkRegistryCenter implements RegistryCenter {
                         log.info("change node new node:" + newNode.getPath());
                     }
                     // 订阅后需要把数据更新传递给监听器处理
-                    List<InstanceMeta> instanceMetas = fectchZkInstanceMetas(service);
+                    Map<String,List<InstanceMeta>> instanceMetas = fectchZkInstanceMetas(service);
                     listenerEvent(event -> event.onSubscribe(service, instanceMetas));
                 } )
                 .build();

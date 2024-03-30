@@ -8,11 +8,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.annotation.Order;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -26,7 +24,7 @@ import java.util.function.Function;
 @Order(-1)
 public class CacheFilter implements Filter {
     // guava cahce 固定参数可移入配置项
-    private LoadingCache<String, RpcResponse> guravaCache = CacheBuilder.newBuilder()
+    private final LoadingCache<String, RpcResponse> guravaCache = CacheBuilder.newBuilder()
             .maximumSize(50) // 最多存储50个元素
             .expireAfterAccess(5, TimeUnit.MINUTES) // 访问后5分钟过期
             .build(new CacheLoader<>() {

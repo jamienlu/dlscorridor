@@ -23,12 +23,7 @@ public class ServiceMeta {
     private String version;
 
     public String toPath() {
-        return String.format("%s_%s_%s_%s_%s",app,namespace,env,name,version);
+        return String.format("%s_%s_%s_%s",app,namespace,env,name);
     }
-    public boolean validVersion(String useVersion) {
-        // 版本号比较算法
-        return true;
-    }
-
 
 }

@@ -16,4 +16,7 @@ discorridor:
   provider:
     enable: true
 
-
+logging:
+  level:
+    root: info
+    cn.jamie: debug

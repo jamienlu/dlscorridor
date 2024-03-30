@@ -7,14 +7,12 @@ import cn.jamie.dlscorridor.core.cluster.RandomLoadBalance;
 import cn.jamie.dlscorridor.core.cluster.RoundLoadBalance;
 import cn.jamie.dlscorridor.core.consumer.ConsumerBootstrap;
 import cn.jamie.dlscorridor.core.filter.CacheFilter;
-import cn.jamie.dlscorridor.core.filter.Filter;
 import cn.jamie.dlscorridor.core.filter.FilterChain;
 import cn.jamie.dlscorridor.core.filter.RpcFilterChain;
 import cn.jamie.dlscorridor.core.filter.TokenFilter;
-import cn.jamie.dlscorridor.core.meta.InstanceMeta;
+
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,16 +22,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.CONSUMER_PREFIX;
-import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.DISCORRIDOR_PREFIX;
 import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.LOADBALANCE_RANDOM;
 import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.LOADBALANCE_ROUND;
-import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.REGISTRY_PREFIX;
 
 /**
  * @author jamieLu
@@ -79,12 +73,13 @@ public class ConsumerAutoConfigure {
     }
 
     @Bean
+    @Order(Integer.MIN_VALUE + 1)
     public ConsumerBootstrap consumerBootstrap() {
         return  new ConsumerBootstrap();
     }
 
     @Bean
-    @Order(Integer.MIN_VALUE + 1)
+    @Order(Integer.MIN_VALUE)
     public ApplicationRunner consumerBootstrap_runner(@Autowired ConsumerBootstrap consumerBootstrap) {
         return x -> {
             // 方法依赖其他bean得等待加载避免循环依赖

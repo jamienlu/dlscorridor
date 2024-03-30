@@ -6,13 +6,11 @@ import cn.jamie.dlscorridor.core.registry.RegistryCenterListener;
 import cn.jamie.dlscorridor.core.registry.RegistryStorage;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * 注册中心监听器 监听注册中心事件
- *
  * 每个消费者注册一个监听器  对他归属的服务和实例信息进行操作
  *
  * @author jamieLu
@@ -29,20 +27,20 @@ public class ZkRegistryCenterListener implements RegistryCenterListener {
     @Override
     public void onRegistry(ServiceMeta serviceMeta) {
         String serverPath = serviceMeta.toPath();
-        log.info("watch zkClient registry serviceMeta:" + serverPath);
+        log.debug("watch zkClient registry serviceMeta:" + serverPath);
         registryStorage.saveServiceMeta(serviceMeta);
     }
 
     @Override
     public void onUnRegistry(ServiceMeta serviceMeta) {
         String serverPath = serviceMeta.toPath();
-        log.info("watch zkClient unregistry serviceMeta:" + serverPath);
+        log.debug("watch zkClient unregistry serviceMeta:" + serverPath);
         registryStorage.removeServiceMeta(serverPath);
     }
 
     @Override
-    public void onSubscribe(ServiceMeta serviceMeta, List<InstanceMeta> instanceMetas) {
-        log.info("watch zkClient subscribe serviceMeta path:" + serviceMeta.toPath());
+    public void onSubscribe(ServiceMeta serviceMeta, Map<String, List<InstanceMeta>> instanceMetas) {
+        log.debug("watch zkClient subscribe serviceMeta path:" + serviceMeta.toPath());
         registryStorage.saveServiceInstanceMetas(serviceMeta, instanceMetas);
     }
 
@@ -50,7 +48,7 @@ public class ZkRegistryCenterListener implements RegistryCenterListener {
     @Override
     public void onUnSubscribe(ServiceMeta serviceMeta) {
         String serverPath = serviceMeta.toPath();
-        log.info("watch zkClient unsubscribe serviceMeta:" + serverPath);
-        registryStorage.removeServiceMeta(serverPath);
+        log.debug("watch zkClient unsubscribe serviceMeta:" + serverPath);
+        registryStorage.removeServiceInstanceMetas(serverPath);
     }
 }

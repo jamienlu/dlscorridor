@@ -18,9 +18,9 @@ import java.util.List;
 @SpringBootApplication
 @RestController
 public class DlscorridorDemoConsumerApplication {
-	@JMConsumer(service = "discorridor-provider", version = "1.0.0")
+	@JMConsumer(service = "discorridor-provider", version = "1.0.1")
 	UserService userService;
-	@JMConsumer(service = "discorridor-provider", version = "1.0.0")
+	@JMConsumer(service = "discorridor-provider", version = "1.0.2")
 	OrderService orderService;
 
 	public static void main(String[] args) {

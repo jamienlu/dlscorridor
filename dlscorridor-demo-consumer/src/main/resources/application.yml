@@ -19,4 +19,8 @@ discorridor:
       route: default
       filters: token;cache
       loadbalance: round
+logging:
+  level:
+    root: info
+    cn.jamie: debug
 

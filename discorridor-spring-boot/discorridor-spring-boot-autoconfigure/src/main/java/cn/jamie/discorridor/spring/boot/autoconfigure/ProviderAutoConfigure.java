@@ -1,8 +1,6 @@
 package cn.jamie.discorridor.spring.boot.autoconfigure;
 
-import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.meta.InstanceMeta;
-import cn.jamie.dlscorridor.core.meta.ServiceMeta;
 import cn.jamie.dlscorridor.core.provider.ProviderBootstrap;
 import cn.jamie.dlscorridor.core.provider.ProviderInvoker;
 import cn.jamie.dlscorridor.core.provider.ProviderStorage;
@@ -11,6 +9,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -32,10 +31,12 @@ public class ProviderAutoConfigure {
         return new ProviderStorage();
     }
     @Bean
+    @Order(Integer.MIN_VALUE + 1)
     public ProviderBootstrap providerBootstrap(ProviderStorage providerStorage) {
         return new ProviderBootstrap(providerStorage);
     }
     @Bean
+    @Order(Integer.MIN_VALUE)
     public ProviderInvoker providerInvoker(ProviderStorage providerStorage) {
         return new ProviderInvoker(providerStorage);
     }

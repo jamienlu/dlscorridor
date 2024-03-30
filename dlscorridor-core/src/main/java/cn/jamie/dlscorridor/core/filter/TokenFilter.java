@@ -2,7 +2,6 @@ package cn.jamie.dlscorridor.core.filter;
 
 import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.api.RpcResponse;
-import cn.jamie.dlscorridor.core.util.RpcUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -17,8 +16,8 @@ public class TokenFilter implements Filter {
     private final long maxSize;
     private final long incurRate;
 
-    private AtomicLong currentSize;
-    private long lastIncurTimestamp;
+    private final AtomicLong currentSize;
+    private volatile long lastIncurTimestamp;
 
     public TokenFilter(long maxSize, long incurRate) {
         this.maxSize = maxSize;
@@ -26,10 +25,18 @@ public class TokenFilter implements Filter {
         this.currentSize = new AtomicLong(maxSize);
         this.lastIncurTimestamp = System.nanoTime();
     }
+
+    /**
+     * 根据时间补充令牌
+     */
     private synchronized void incur() {
         long now = System.nanoTime();
         // nanoseconds to seconds
         long tokensToAdd = ((now - lastIncurTimestamp) / 1_000_000_000) * incurRate;
+        // 时间差小于1s不补令牌
+        if (tokensToAdd < 1) {
+            return;
+        }
         // 添加token许可
         if (currentSize.get() + tokensToAdd > maxSize) {
             currentSize.set(maxSize);
@@ -48,7 +55,7 @@ public class TokenFilter implements Filter {
             filterChain.doFilter(rpcRequest,rpcResponse,invoke);
             log.info("token end this invoke");
         } else {
-            log.error("no use token skip this filter");
+            log.error("no use token can not process filter");
             rpcResponse.setStatus(false);
             rpcResponse.setEx(new RuntimeException("too fast! no token use"));
         }
