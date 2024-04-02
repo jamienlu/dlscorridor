@@ -1,5 +1,6 @@
 package cn.jamie.dlscorridor.demo.provider;
 
+import cn.jamie.discorridor.spring.boot.autoconfigure.process.ProviderController;
 import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.api.RpcResponse;
 import cn.jamie.dlscorridor.core.meta.InstanceMeta;
@@ -39,11 +40,8 @@ public class DlscorridorDemoProviderApplication {
     @Bean
     public ApplicationRunner getRunner() {
         return x -> {
-            RpcRequest rpcRequest = RpcRequest.builder()
-                .service("cn.jamie.discorridor.demo.api.UserService")
-                .methodSign("findById/long").args(new Object[]{100}).build();
-            RpcResponse<?> res = invoke(rpcRequest);
-            System.out.println("return res:" + res.getData());
+            ProviderController providerController = applicationContext.getBean(ProviderController.class);
+            System.out.println(1);
         };
     }
 

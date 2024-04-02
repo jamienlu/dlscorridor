@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 
 import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.REGISTRY_PREFIX;
 
@@ -29,6 +30,7 @@ public class RegistryConfiguration {
         return new ZkRegistryStorage();
     }
     @Bean(initMethod = "start", destroyMethod = "stop")
+    @Order(Integer.MIN_VALUE)
     public RegistryCenter registryCenter(@Autowired RegistryStorage registryStorage) {
         ZkEnvData zkEnvData = ZkEnvData.builder().url(env.getUrl()).namespace(env.getNamespace()).baseTime(env.getOverTime()).maxRetries(env.getRetryCount())
                 .build();

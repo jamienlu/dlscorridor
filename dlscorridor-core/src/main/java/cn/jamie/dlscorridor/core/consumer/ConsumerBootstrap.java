@@ -21,8 +21,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 消费者获取服务代理
@@ -31,10 +33,12 @@ import java.util.Map;
 @Slf4j
 public class ConsumerBootstrap implements ApplicationContextAware {
     ApplicationContext applicationContext;
-    private Map<String,Object> stub = new HashMap<>();
     private ServiceMeta serviceMeta;
     private RegistryCenter registryCenter;
     private FilterChain filterChain;
+
+    private Map<String,Object> stub = new HashMap<>();
+    private Set<ServiceMeta> services = new HashSet<>();
     /**
      * 解析消费者中需要服务提供者提供注入的服务实例
      */
@@ -43,10 +47,7 @@ public class ConsumerBootstrap implements ApplicationContextAware {
         registryCenter = applicationContext.getBean(RegistryCenter.class);
         serviceMeta = applicationContext.getBean(ServiceMeta.class);
         // rpc配置参数
-        Router router = applicationContext.getBean(Router.class);
-        LoadBalancer loadBalancer = applicationContext.getBean(LoadBalancer.class);
-        FilterChain filterChain = applicationContext.getBean(FilterChain.class);
-        RpcContext rpcContext = RpcContext.builder().router(router).filterChain(filterChain).loadBalancer(loadBalancer).build();
+        RpcContext rpcContext =  applicationContext.getBean(RpcContext.class);
         // 扫描类中使用服务提供者的属性
         String[] beanNames = applicationContext.getBeanDefinitionNames();
         // 扫描服务提供者的类 跳过其他框架的bean
@@ -81,6 +82,7 @@ public class ConsumerBootstrap implements ApplicationContextAware {
         target.setApp(jmConsumer.service());
         target.setName(serviceName);
         target.setVersion(jmConsumer.version());
+        services.add(target);
         return target;
     }
     private Object createConsumerFromRegistry(Class<?> service, ServiceMeta serviceMeta, RpcContext rpcContext) {
@@ -101,11 +103,8 @@ public class ConsumerBootstrap implements ApplicationContextAware {
         if (log.isDebugEnabled()) {
             log.debug("prepare destroy instances" + registryCenter.fectchAll(serviceMeta));
         }
-        stub.keySet().forEach(serviceName -> {
-            ServiceMeta target = new ServiceMeta();
-            BeanUtils.copyProperties(serviceMeta, target);
-            target.setName(serviceName);
-            registryCenter.unsubscribe(target);
+        services.forEach(serviceMeta -> {
+            registryCenter.unsubscribe(serviceMeta);
         });
         if (log.isDebugEnabled()) {
             log.debug("after destroy instances" + registryCenter.fectchAll(serviceMeta));

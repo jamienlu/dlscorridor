@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 /**
  * @author jamieLu
  * @create 2024-03-17
@@ -21,4 +23,6 @@ public class RpcContext {
     private Router router;
     // 负载均衡器选择
     private LoadBalancer loadBalancer;
+    // 参数列表
+    private Map<String,String> parameters;
 }

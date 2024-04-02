@@ -22,7 +22,7 @@ import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfig
  */
 @Configuration
 @ConditionalOnProperty(prefix = PROVIDER_PREFIX, name = "enable")
-@AutoConfigureAfter(DiscorridorAutoConfigure.class)
+@AutoConfigureAfter({DiscorridorAutoConfigure.class, RegistryConfiguration.class})
 public class ProviderAutoConfigure {
     @Value("${server.port}")
     private int port;

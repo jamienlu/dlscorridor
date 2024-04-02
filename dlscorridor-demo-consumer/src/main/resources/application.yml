@@ -15,10 +15,12 @@ discorridor:
       retry-count: 3
   consumer:
     enable: true
-    env:
+    stub:
       route: default
       filters: token;cache
       loadbalance: round
+      token-rate: 10
+      token-size: 100
 logging:
   level:
     root: info

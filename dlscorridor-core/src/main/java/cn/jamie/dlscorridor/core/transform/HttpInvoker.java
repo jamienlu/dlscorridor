@@ -21,7 +21,7 @@ public class HttpInvoker {
             .writeTimeout(100,TimeUnit.SECONDS)
             .connectTimeout(100,TimeUnit.SECONDS)
             .build();
-    public String postOkHttp(String url, String body) throws IOException {
+    public static String postOkHttp(String url, String body) throws IOException {
         Request request = new Request.Builder()
                 .url(url)
                 .post(RequestBody.create(body,JSON_TYPE))

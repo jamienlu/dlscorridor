@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +58,10 @@ public class ZkRegistryStorage implements RegistryStorage {
     @Override
     public List<InstanceMeta> searchInstanceMetas(ServiceMeta service) {
         List<String> versions = serverVersions.get(service.toPath());
+        log.debug("searchInstanceMetas versions:" + versions);
+        if (versions == null || versions.isEmpty()) {
+            return new ArrayList<>();
+        }
         int index = 0;
         for (String version : versions) {
             if (VersionUtil.compareVersion(service.getVersion(),version) >= 0) {

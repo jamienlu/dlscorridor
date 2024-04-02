@@ -8,11 +8,11 @@ import lombok.Data;
  */
 @Data
 public class RegistryEnv {
-    private String type;
-    private String namespace;
-    private String url;
-    private Integer overTime;
-    private Integer retryCount;
-    private String username;
-    private String password;
+    private String type = "zk";
+    private String namespace = "public";
+    private String url = "192.168.0.102:2181";
+    private Integer overTime = 1000;
+    private Integer retryCount = 3;
+    private String username = "root";
+    private String password = "123456";
 }

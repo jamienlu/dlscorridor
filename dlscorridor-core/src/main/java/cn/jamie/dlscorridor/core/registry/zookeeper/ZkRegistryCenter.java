@@ -1,5 +1,6 @@
 package cn.jamie.dlscorridor.core.registry.zookeeper;
 
+import cn.jamie.dlscorridor.core.exception.RpcException;
 import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import cn.jamie.dlscorridor.core.meta.ServiceMeta;
 import cn.jamie.dlscorridor.core.registry.RegistryCenter;
@@ -87,7 +88,7 @@ public class ZkRegistryCenter implements RegistryCenter {
             client.create().withMode(CreateMode.EPHEMERAL).forPath(instancePath,"provider".getBytes());
             log.info("create zk registry instance path:" + instancePath);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RpcException(e.getMessage(), e.getCause());
         } finally {
             listenerEvent(event -> event.onRegistry(service));
 
@@ -111,7 +112,7 @@ public class ZkRegistryCenter implements RegistryCenter {
             log.info("remove zk registry instance path:" + instancePath);
             client.delete().quietly().forPath(instancePath);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RpcException(e.getMessage(), e.getCause());
         } finally {
             listenerEvent(event -> event.onUnRegistry(service));
         }
@@ -128,13 +129,13 @@ public class ZkRegistryCenter implements RegistryCenter {
                 if (VersionUtil.compareVersion(service.getVersion(), version) <= 0) {
                     List<InstanceMeta> nodes = client.getChildren().forPath(serverPath + "/" + version).stream()
                         .map(InstanceMeta::pathToInstance).toList();
-                    log.debug("real fetch path version" + service.toPath() + ":" + version + "##size:" + nodes.size());
+                    log.debug("real fetch path:" + service.toPath() + "##version:" + version + "##size:" + nodes.size());
                     result.put(version, nodes);
                 }
             }
         } catch (Exception e) {
             log.error(e.getMessage(),e);
-            throw new RuntimeException(e);
+            throw new RpcException(e.getMessage(), e.getCause());
         }
         return result;
     }
@@ -145,7 +146,7 @@ public class ZkRegistryCenter implements RegistryCenter {
 
     @Override
     public void subscribe(ServiceMeta service) {
-        log.debug("prepare subscribe stub " + JSON.toJSONString(service));
+        log.debug("prepare subscribe stub:" + JSON.toJSONString(service));
         // 初始拉一次订阅数据数据
         listenerEvent(event -> event.onSubscribe(service, fectchZkInstanceMetas(service)));
 
@@ -168,11 +169,12 @@ public class ZkRegistryCenter implements RegistryCenter {
         cache.listenable().addListener(cacheListener);
         cache.start();
         // 去订阅需要关闭订阅流
-        serverCuratorCaches.put(serverPath, cache);
+        serverCuratorCaches.put(service.toPath(), cache);
     }
 
     @Override
     public void unsubscribe(ServiceMeta service) {
+        log.debug("prepare unsubscribe stub:" + JSON.toJSONString(service));
         try {
             serverCuratorCaches.get(service.toPath()).close();
             serverCuratorCaches.remove(service.toPath());

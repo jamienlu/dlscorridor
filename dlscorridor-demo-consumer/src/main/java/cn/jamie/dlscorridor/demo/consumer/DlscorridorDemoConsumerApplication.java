@@ -20,7 +20,7 @@ import java.util.List;
 public class DlscorridorDemoConsumerApplication {
 	@JMConsumer(service = "discorridor-provider", version = "1.0.1")
 	UserService userService;
-	@JMConsumer(service = "discorridor-provider", version = "1.0.2")
+	@JMConsumer(service = "discorridor-provider", version = "1.0.1")
 	OrderService orderService;
 
 	public static void main(String[] args) {

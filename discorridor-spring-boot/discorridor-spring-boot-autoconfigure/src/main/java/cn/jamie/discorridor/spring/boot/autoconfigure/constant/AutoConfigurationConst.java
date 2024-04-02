@@ -17,4 +17,7 @@ public class AutoConfigurationConst {
     public static final String LOADBALANCE_ROUND = "round";
     public static final String LOADBALANCE_RANDOM = "random";
 
+    public static final String FILTER_TOKEN = "token";
+    public static final String FILTER_CACHE= "cache";
+
 }

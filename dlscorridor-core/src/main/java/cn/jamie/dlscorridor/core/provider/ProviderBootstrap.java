@@ -58,7 +58,7 @@ public class ProviderBootstrap implements ApplicationContextAware {
         // 注册中心注册
         RegistryCenter registryCenter = applicationContext.getBean(RegistryCenter.class);
         serviceMetas.forEach(meta -> registryCenter.register(meta,instanceMeta));
-        log.info("provider listener handler spring context refresh end");
+        log.info("spring load ProviderBootstrap end");
     }
     private void loadProvider(ServiceMeta serviceMeta) {
         List<ServiceMeta> skeltonRegs = new ArrayList<>();

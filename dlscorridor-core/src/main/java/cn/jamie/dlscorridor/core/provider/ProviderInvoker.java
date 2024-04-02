@@ -2,10 +2,12 @@ package cn.jamie.dlscorridor.core.provider;
 
 import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.api.RpcResponse;
+import cn.jamie.dlscorridor.core.exception.RpcException;
 import cn.jamie.dlscorridor.core.meta.ProviderMeta;
 import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -38,16 +40,17 @@ public class ProviderInvoker {
                 realArgs[i] = JSON.to(method.getParameterTypes()[i],rpcRequest.getArgs()[i]);
             }
             try {
-                method.setAccessible(true);
                 data = method.invoke(providerMeta.getServiceImpl(), realArgs);
                 rpcResponse.setData(data);
                 rpcResponse.setStatus(true);
-            } catch (Exception e) {
+            } catch (InvocationTargetException | IllegalAccessException e) {
                 log.info(method.getDeclaringClass().getName());
                 log.error("invoke error:", e);
                 rpcResponse.setStatus(false);
-                rpcResponse.setEx(e);
+                rpcResponse.setEx(new RpcException(e.getCause(),e.getMessage()));
             }
+        } else {
+            rpcResponse.setEx(new RpcException(RpcException.NO_SUCH_METHOD_EX));
         }
 
         return rpcResponse;
