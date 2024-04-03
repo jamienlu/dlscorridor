@@ -2,6 +2,7 @@ package cn.jamie.dlscorridor.demo.consumer;
 
 import cn.jamie.discorridor.demo.api.Order;
 import cn.jamie.discorridor.demo.api.OrderService;
+import cn.jamie.discorridor.demo.api.PayService;
 import cn.jamie.discorridor.demo.api.User;
 import cn.jamie.discorridor.demo.api.UserService;
 import cn.jamie.dlscorridor.core.annotation.JMConsumer;
@@ -10,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +25,8 @@ public class DlscorridorDemoConsumerApplication {
 	UserService userService;
 	@JMConsumer(service = "discorridor-provider", version = "1.0.1")
 	OrderService orderService;
+	@JMConsumer(service = "discorridor-pay", version = "1.0.0")
+	PayService payService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(DlscorridorDemoConsumerApplication.class, args);
@@ -32,12 +36,11 @@ public class DlscorridorDemoConsumerApplication {
 		return userService.findById(id);
 	}
 
-	@RequestMapping("/order/id")
-	public Order findOrderBy(@RequestParam("id") int id) {
-		return orderService.findById(id);
+	@GetMapping("/pay")
+	public Boolean findBy(@RequestParam("userId") int userId, @RequestParam("orderId") int orderId) {
+		return payService.pay(userService.findById(userId),orderService.findById(orderId));
 	}
-
-	@GetMapping("/user/out/id")
+	@GetMapping("/user/out")
 	public User findTimeout(@RequestParam("id") long id) {
 		return userService.findTimeout(id);
 	}

@@ -1,0 +1,24 @@
+server:
+  port: 8901
+discorridor:
+  env:
+    app: discorridor-pay
+    namespace: public
+    env: dev
+    name: pay-v1
+    version: 1.0.0
+  registry:
+    env:
+      namespace: public
+      url: 192.168.0.101:2181
+      over-time: 1000
+      retry-count: 3
+  consumer:
+    enable: true
+  provider:
+    enable: true
+logging:
+  level:
+    root: info
+    cn.jamie: debug
+

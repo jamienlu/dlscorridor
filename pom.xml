@@ -19,6 +19,7 @@
         <module>discorridor-demo-api</module>
         <module>dlscorridor-demo-provider</module>
         <module>dlscorridor-demo-consumer</module>
+        <module>discorridor-demo-mix</module>
         <module>discorridor-spring-boot</module>
     </modules>
 
