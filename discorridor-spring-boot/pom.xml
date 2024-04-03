@@ -28,4 +28,12 @@
         <module>discorridor-spring-boot-autoconfigure</module>
     </modules>
 
+    <dependencies>
+        <dependency>
+            <groupId>cn.jamie</groupId>
+            <artifactId>dlscorridor-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
 </project>

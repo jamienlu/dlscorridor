@@ -1,6 +1,5 @@
 package cn.jamie.dlscorridor.core.cluster;
 
-import cn.jamie.dlscorridor.core.api.Router;
 import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import lombok.extern.slf4j.Slf4j;
 

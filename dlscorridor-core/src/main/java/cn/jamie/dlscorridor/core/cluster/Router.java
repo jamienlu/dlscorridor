@@ -1,4 +1,4 @@
-package cn.jamie.dlscorridor.core.api;
+package cn.jamie.dlscorridor.core.cluster;
 
 import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 
