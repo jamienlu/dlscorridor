@@ -15,6 +15,7 @@ discorridor:
       retry-count: 3
   provider:
     enable: true
+    gray: false
 
 logging:
   level:

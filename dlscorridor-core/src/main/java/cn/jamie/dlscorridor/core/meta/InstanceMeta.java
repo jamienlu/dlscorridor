@@ -1,10 +1,12 @@
 package cn.jamie.dlscorridor.core.meta;
 
+import com.alibaba.fastjson2.JSON;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -25,7 +27,8 @@ public class InstanceMeta {
     // 上下线
     @Builder.Default
     private boolean status = true;
-    private Map<String,String> parameters;
+    @Builder.Default
+    private Map<String,String> parameters = new HashMap<>();
 
     public InstanceMeta(String schema, String host, Integer port, String context) {
         this.schema = schema;
@@ -41,14 +44,14 @@ public class InstanceMeta {
         return String.format("%s:%d", host, port);
     }
 
-    public static InstanceMeta httpInstanceMeta(String host, Integer port) {
-        return InstanceMeta.builder().schema("http").host(host).port(port).build();
-    }
-
     public static InstanceMeta pathToInstance(String path) {
         String[] paras = path.split("_", -1);
         assert paras.length > 1;
         return InstanceMeta.builder().host(paras[0]).port(Integer.valueOf(paras[1])).build();
+    }
+
+    public String toMetas() {
+        return JSON.toJSONString(this.getParameters());
     }
 
 }

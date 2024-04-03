@@ -12,7 +12,7 @@ import java.util.List;
  * @create 2024-03-17
  */
 public class RandomLoadBalance implements LoadBalancer {
-    SecureRandom random = new SecureRandom();
+    private final SecureRandom random = new SecureRandom();
     @Override
     public InstanceMeta choose(List<InstanceMeta> providers) {
         if (CollectionUtils.isEmpty(providers)) {
@@ -20,7 +20,7 @@ public class RandomLoadBalance implements LoadBalancer {
         } else if (providers.size() == 1) {
             return providers.get(0);
         } else {
-            return  providers.get(random.nextInt(providers.size()));
+            return providers.get(random.nextInt(providers.size()));
         }
     }
 }

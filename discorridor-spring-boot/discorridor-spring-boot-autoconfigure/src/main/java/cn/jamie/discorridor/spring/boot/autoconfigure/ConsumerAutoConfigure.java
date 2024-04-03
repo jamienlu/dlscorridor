@@ -1,9 +1,13 @@
 package cn.jamie.discorridor.spring.boot.autoconfigure;
 
-import cn.jamie.discorridor.spring.boot.autoconfigure.bean.CustomerEnv;
+import cn.jamie.discorridor.spring.boot.autoconfigure.bean.FaultEnv;
+import cn.jamie.discorridor.spring.boot.autoconfigure.bean.FilterEnv;
+import cn.jamie.discorridor.spring.boot.autoconfigure.bean.GrayEnv;
+import cn.jamie.discorridor.spring.boot.autoconfigure.bean.LoadBalanceEnv;
 import cn.jamie.dlscorridor.core.api.LoadBalancer;
 import cn.jamie.dlscorridor.core.api.Router;
 import cn.jamie.dlscorridor.core.api.RpcContext;
+import cn.jamie.dlscorridor.core.cluster.GrayRouter;
 import cn.jamie.dlscorridor.core.cluster.RandomLoadBalance;
 import cn.jamie.dlscorridor.core.cluster.RoundLoadBalance;
 import cn.jamie.dlscorridor.core.consumer.ConsumerBootstrap;
@@ -23,7 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,18 +48,25 @@ import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfig
 @AutoConfigureAfter({DiscorridorAutoConfigure.class, RegistryConfiguration.class})
 @Data
 public class ConsumerAutoConfigure {
+    private List<FilterEnv> filters = new ArrayList<>();
     @NestedConfigurationProperty
-    private CustomerEnv stub;
+    private GrayEnv gray = new GrayEnv();
+    @NestedConfigurationProperty
+    private LoadBalanceEnv balance = new LoadBalanceEnv();
+    @NestedConfigurationProperty
+    private FaultEnv fault = new FaultEnv();
     @Bean
     public Router router() {
+        if (gray.getEnable()) {
+            return new GrayRouter(gray.getRatio());
+        }
         return Router.Default;
     }
     @Bean
     public LoadBalancer loadBalancer() {
-        String balance = stub.getLoadbalance();
-        if (LOADBALANCE_ROUND.equals(balance)) {
+        if (LOADBALANCE_ROUND.equals(balance.getType())) {
             return new RoundLoadBalance();
-        } else if (LOADBALANCE_RANDOM.equals(balance)) {
+        } else if (LOADBALANCE_RANDOM.equals(balance.getType())) {
             return new RandomLoadBalance();
         } else {
             return instanceMetas -> instanceMetas.get(0);
@@ -65,13 +76,12 @@ public class ConsumerAutoConfigure {
     @Bean
     public FilterChain filters() {
         FilterChain filterChain = new RpcFilterChain();
-        List<String> filters = Arrays.stream(stub.getFilters().split(";",-1)).toList();
-        filters.forEach(x -> {
-            if (x.equals(FILTER_TOKEN)) {
-                filterChain.addFilter(new TokenFilter(stub.getTokenSize(),stub.getTokenRate()));
+        filters.forEach(filter -> {
+            if (FILTER_TOKEN.equals(filter.getType())) {
+                filterChain.addFilter(new TokenFilter(filter.getTokenSize(),filter.getTokenSeconds()));
             }
-            if (x.equals(FILTER_CACHE)) {
-                filterChain.addFilter(new CacheFilter());
+            if (FILTER_CACHE.equals(filter.getType())) {
+                filterChain.addFilter(new CacheFilter(filter.getCacheSize(), filter.getCacheSeconds()));
             }
         });
         return filterChain;
@@ -79,11 +89,11 @@ public class ConsumerAutoConfigure {
     @Bean
     public RpcContext rpcContext(@Autowired Router router,@Autowired LoadBalancer loadBalancer,@Autowired FilterChain filterChain) {
         Map<String,String> parameters = new HashMap<>();
-        parameters.put("app.retry", String.valueOf(stub.getRetry()));
-        parameters.put("app.timeout", String.valueOf(stub.getTimeout()));
-        parameters.put("app.faultLimit", String.valueOf(stub.getFaultLimit()));
-        parameters.put("app.halfOpenDelay", String.valueOf(stub.getHalfOpenDelay()));
-        parameters.put("app.halfOpenInitialDelay", String.valueOf(stub.getHalfOpenInitialDelay()));
+        parameters.put("app.retry", String.valueOf(fault.getRetry()));
+        parameters.put("app.timeout", String.valueOf(fault.getTimeout()));
+        parameters.put("app.faultLimit", String.valueOf(fault.getFaultLimit()));
+        parameters.put("app.halfOpenDelay", String.valueOf(fault.getHalfOpenDelay()));
+        parameters.put("app.halfOpenInitialDelay", String.valueOf(fault.getHalfOpenInitialDelay()));
         return RpcContext.builder().router(router).loadBalancer(loadBalancer).filterChain(filterChain).parameters(parameters).build();
     }
     @Bean

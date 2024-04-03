@@ -1,5 +1,5 @@
 ### 获取consumer用户信息
-GET http://localhost:8801/user/id?id=101
+GET http://localhost:8801/user/id?id=123
 ### 获取consumer订单信息
 GET http://localhost:8801/order?id=101
 ### 获取consumer超时信息

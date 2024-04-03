@@ -26,6 +26,8 @@ import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfig
 public class ProviderAutoConfigure {
     @Value("${server.port}")
     private int port;
+    @Value("${discorridor.provider.gray:false}")
+    private boolean gray;
     @Bean
     public ProviderStorage providerStorage() {
         return new ProviderStorage();
@@ -48,6 +50,10 @@ public class ProviderAutoConfigure {
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
-        return InstanceMeta.builder().host(ip).port(port).build();
+        InstanceMeta instanceMeta = InstanceMeta.builder().host(ip).port(port).build();
+        if (gray) {
+            instanceMeta.getParameters().put("gray", "true");
+        }
+        return instanceMeta;
     }
 }
