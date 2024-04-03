@@ -44,14 +44,6 @@ dlscorridor-core/src/main/java/cn/jamie/dlscorridor/core/util
 
 ## 使用示例
 
-```plain
-<dependency>
-    <groupId>cn.jamie</groupId>
-    <artifactId>discorridor-spring-boot-autoconfigure</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-</dependency>
-```
-
 ## 
 ```plain
 <dependency>
