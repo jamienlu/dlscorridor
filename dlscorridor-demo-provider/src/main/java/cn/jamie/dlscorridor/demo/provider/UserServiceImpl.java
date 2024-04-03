@@ -4,6 +4,7 @@ import cn.jamie.discorridor.demo.api.User;
 import cn.jamie.discorridor.demo.api.UserService;
 import cn.jamie.dlscorridor.core.annotation.JMProvider;
 import cn.jamie.dlscorridor.core.annotation.RpcService;
+import cn.jamie.dlscorridor.core.exception.RpcException;
 
 import java.util.List;
 import java.util.Set;
@@ -24,5 +25,13 @@ public class UserServiceImpl implements  @RpcService UserService {
     @Override
     public List<User> search(User user) {
         return List.of(user);
+    }
+
+    @Override
+    public User findTimeout(long ids) {
+        if (ids > 100) {
+            throw new RpcException(RpcException.SOCKET_TIMEOUT_EX);
+        }
+        return new User(1, "|jamie-" + System.currentTimeMillis());
     }
 }

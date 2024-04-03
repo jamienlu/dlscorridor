@@ -2,6 +2,7 @@ package cn.jamie.dlscorridor.core.filter;
 
 import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.api.RpcResponse;
+import cn.jamie.dlscorridor.core.exception.RpcException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -51,13 +52,13 @@ public class TokenFilter implements Filter {
         // 自动根据时间补令牌
         incur();
         if (currentSize.decrementAndGet() > 0) {
-            log.info("token acquire this invoke");
+            log.info("token acquire this invoke:" + currentSize.get());
             filterChain.doFilter(rpcRequest,rpcResponse,invoke);
             log.info("token end this invoke");
         } else {
             log.error("no use token can not process filter");
             rpcResponse.setStatus(false);
-            rpcResponse.setEx(new RuntimeException("too fast! no token use"));
+            rpcResponse.setEx(new RpcException(RpcException.NO_TOKEN));
         }
     }
 }

@@ -1,5 +1,6 @@
 package cn.jamie.dlscorridor.core.api;
 
+import cn.jamie.dlscorridor.core.exception.RpcException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,11 +10,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RpcResponse<T> {
+public class RpcResponse {
     // 响应状态
     private boolean status;
     // 数据
-    private T data;
+    private Object data;
     // 异常响应
-    private Exception ex;
+    private RpcException ex;
 }

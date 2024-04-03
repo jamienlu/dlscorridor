@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * @author jamieLu
@@ -88,7 +89,7 @@ public class ZkRegistryCenter implements RegistryCenter {
             client.create().withMode(CreateMode.EPHEMERAL).forPath(instancePath,"provider".getBytes());
             log.info("create zk registry instance path:" + instancePath);
         } catch (Exception e) {
-            throw new RpcException(e.getMessage(), e.getCause());
+            throw new RpcException(e.getCause(),e.getMessage());
         } finally {
             listenerEvent(event -> event.onRegistry(service));
 
@@ -112,7 +113,7 @@ public class ZkRegistryCenter implements RegistryCenter {
             log.info("remove zk registry instance path:" + instancePath);
             client.delete().quietly().forPath(instancePath);
         } catch (Exception e) {
-            throw new RpcException(e.getMessage(), e.getCause());
+            throw new RpcException(e.getCause(),e.getMessage());
         } finally {
             listenerEvent(event -> event.onUnRegistry(service));
         }
@@ -128,14 +129,14 @@ public class ZkRegistryCenter implements RegistryCenter {
                 // 你需要的版本应该<=服务列表里的版本
                 if (VersionUtil.compareVersion(service.getVersion(), version) <= 0) {
                     List<InstanceMeta> nodes = client.getChildren().forPath(serverPath + "/" + version).stream()
-                        .map(InstanceMeta::pathToInstance).toList();
+                        .map(InstanceMeta::pathToInstance).collect(Collectors.toList());
                     log.debug("real fetch path:" + service.toPath() + "##version:" + version + "##size:" + nodes.size());
                     result.put(version, nodes);
                 }
             }
         } catch (Exception e) {
             log.error(e.getMessage(),e);
-            throw new RpcException(e.getMessage(), e.getCause());
+            throw new RpcException(e.getCause(),e.getMessage());
         }
         return result;
     }

@@ -11,6 +11,7 @@ import cn.jamie.dlscorridor.core.util.RpcMethodUtil;
 import cn.jamie.dlscorridor.core.util.RpcReflectUtil;
 
 import cn.jamie.dlscorridor.core.util.SlidingTimeWindow;
+import cn.jamie.dlscorridor.core.util.TypeUtil;
 import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,16 +67,11 @@ public class JMInvocationHandler implements InvocationHandler {
         RpcResponse rpcResponse = RpcResponse.builder().status(false).data(null).build();
         rpcContext.getFilterChain().doFilter(rpcRequest, rpcResponse, this::handler);
         if (rpcResponse.isStatus()) {
-            return JSON.to(method.getReturnType(), rpcResponse.getData());
-        } else {
-            Exception exception = rpcResponse.getEx();
-            if(exception instanceof RpcException ex) {
-                throw ex;
-            } else {
-                throw new RpcException(exception, RpcException.UnknownEx);
-            }
+            return TypeUtil.castMethodResult(method, rpcResponse.getData());
         }
+        return null;
     }
+
     private RpcResponse handler(RpcRequest rpcRequest) {
         RpcResponse rpcResponse = RpcResponse.builder().status(false).build();;
         InstanceMeta instanceMeta = null;
@@ -86,36 +82,38 @@ public class JMInvocationHandler implements InvocationHandler {
         while (retry-- > 0) {
             log.debug("retry rpc handler can invoke count:" + retry);
             // 1.rpc实例获取
+            if (!halfOpenInstanceMetas.isEmpty()) {
+                // 故障探活
+                log.debug("rpc handler type halfOpen");
+                instanceMeta = halfOpenInstanceMetas.remove(0);
+            } else {
+                // 远程调用路由
+                log.debug("rpc handler type route balance");
+                instanceMeta = rpcContext.getLoadBalancer().choose(rpcContext.getRouter().router(instanceMetas));
+            }
+            if (instanceMeta == null) {
+                continue;
+            }
             try {
-                if (!halfOpenInstanceMetas.isEmpty()) {
-                    // 故障探活
-                    instanceMeta = halfOpenInstanceMetas.remove(0);
-                } else {
-                    // 远程调用路由
-                    instanceMeta = rpcContext.getLoadBalancer().choose(rpcContext.getRouter().router(instanceMetas));
-                }
-                if (instanceMeta == null) {
-                    continue;
-                }
                 // 2.rpc实例调用
                 log.info("real invoke url:" + instanceMeta.toAddress());
                 rpcResponse =  post(rpcRequest,HttpUtil.convertIpAddressToHttp(instanceMeta.toAddress()));
             } catch (Exception e) {
-                // 故障隔离
-                log.error("rpc handle is error", e);
-                if (null != instanceMeta) {
-                    windows.putIfAbsent(instanceMeta.toPath(), new SlidingTimeWindow(30));
-                    SlidingTimeWindow window = windows.get(instanceMeta.toPath());
-                    window.record(System.currentTimeMillis());
-                    if (window.getSum() > faultLimit) {
-                        log.error("instance {} is error, isolatedInstanceMetas={}, instanceMetas={}", instanceMeta, isolatedInstanceMetas, instanceMetas);
-                        instanceMetas.remove(instanceMeta);
-                        isolatedInstanceMetas.add(instanceMeta);
-                    }
-                }
-                throw e;
+                rpcResponse.setEx(new RpcException(e.getCause(), RpcException.UNKNOWN_EX));
             }
-            // 3.rpc 探活恢复
+            // 3.rpc故障隔离
+            if (!rpcResponse.isStatus()) {
+                windows.putIfAbsent(instanceMeta.toPath(), new SlidingTimeWindow(30));
+                SlidingTimeWindow window = windows.get(instanceMeta.toPath());
+                window.record(System.currentTimeMillis());
+                if (window.getSum() > faultLimit) {
+                    log.error("instance {} is error, isolatedInstanceMetas={}, instanceMetas={}", instanceMeta, isolatedInstanceMetas, instanceMetas);
+                    instanceMetas.remove(instanceMeta);
+                    isolatedInstanceMetas.add(instanceMeta);
+                }
+                continue;
+            }
+            // 4.rpc 探活恢复
             synchronized (instanceMetas) {
                 if (!instanceMetas.contains(instanceMeta)) {
                     isolatedInstanceMetas.remove(instanceMeta);
@@ -135,7 +133,8 @@ public class JMInvocationHandler implements InvocationHandler {
             res = HttpInvoker.postOkHttp(url, JSON.toJSONString(rpcRequest));
             return JSON.parseObject(res, RpcResponse.class);
         } catch (IOException e) {
-            return RpcResponse.builder().status(false).ex(e).build();
+            log.error("postOkHttp error", e);
+            throw new RpcException(e, RpcException.UNKNOWN_EX);
         }
     }
 }

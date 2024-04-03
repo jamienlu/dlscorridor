@@ -21,6 +21,6 @@ import java.util.concurrent.TimeUnit;
 public class HttpUtil {
 
     public static String convertIpAddressToHttp(String url) {
-        return "http://" + url;
+        return "http://" + url + "/rpc/services";
     }
 }

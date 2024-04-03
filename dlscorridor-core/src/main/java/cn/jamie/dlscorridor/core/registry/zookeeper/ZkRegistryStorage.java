@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 目前设计是没有一个服务或消费实例就会持有一个各自的storage
@@ -43,7 +44,7 @@ public class ZkRegistryStorage implements RegistryStorage {
     public void saveServiceInstanceMetas(ServiceMeta service, Map<String, List<InstanceMeta>> instanceMetas) {
         String serverPath = service.toPath();
         // 每个服务订阅者存的版本服务实例有序  这样可以在获取的时候拿到小于等于他最接近的实例
-        serverVersions.put(serverPath, instanceMetas.keySet().stream().sorted(VersionUtil::compareVersion).toList());
+        serverVersions.put(serverPath, instanceMetas.keySet().stream().sorted(VersionUtil::compareVersion).collect(Collectors.toList()));
         instanceMetas.forEach((key,value) -> serverInstanceMetas.putIfAbsent(serverPath + "/" + key, instanceMetas.get(key)));
         log.info("save success serviceMeta instanceMetas path and size:" + serverPath + "##" + instanceMetas.size());
     }

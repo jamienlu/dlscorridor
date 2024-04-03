@@ -7,4 +7,6 @@ public interface UserService {
     User findById(long id);
     long find(Set<Integer> ids);
     List<User> search(User user);
+
+    User findTimeout(long ids);
 }

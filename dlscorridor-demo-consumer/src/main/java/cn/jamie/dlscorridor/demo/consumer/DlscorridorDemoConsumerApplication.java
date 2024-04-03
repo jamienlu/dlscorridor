@@ -9,6 +9,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,14 +27,19 @@ public class DlscorridorDemoConsumerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DlscorridorDemoConsumerApplication.class, args);
 	}
-	@RequestMapping("/")
+	@RequestMapping("/user/id")
 	public User findBy(@RequestParam("id") int id) {
 		return userService.findById(id);
 	}
 
-	@RequestMapping("/order")
+	@RequestMapping("/order/id")
 	public Order findOrderBy(@RequestParam("id") int id) {
 		return orderService.findById(id);
+	}
+
+	@GetMapping("/user/out/id")
+	public User findTimeout(@RequestParam("id") long id) {
+		return userService.findTimeout(id);
 	}
 
 	@Bean

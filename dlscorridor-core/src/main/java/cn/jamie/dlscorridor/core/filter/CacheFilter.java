@@ -41,8 +41,11 @@ public class CacheFilter implements Filter {
         if (result == null) {
             log.info("not fount cache key:" + rpcRequest);
             filterChain.doFilter(rpcRequest,rpcResponse,rpcInvoke);
-            log.info("save cache value:" + JSON.toJSONString(rpcResponse));
-            guravaCache.put(rpcRequest.toString(), rpcResponse);
+            // 返回的结果无异常才缓存
+            if (rpcResponse.isStatus()) {
+                log.info("save cache value:" + JSON.toJSONString(rpcResponse));
+                guravaCache.put(rpcRequest.toString(), rpcResponse);
+            }
         }
         RpcUtil.cloneRpcResponse(rpcResponse, result);
         log.info("end cache filter:" + rpcRequest);
