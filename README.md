@@ -39,7 +39,8 @@ dlscorridor-core/src/main/java/cn/jamie/dlscorridor/core/util
 
 ## discorridor-core运行视图
 
-![discorridor运行视图](https://github.com/JamieAsura/dlscorridor/assets/37697410/dc60fe71-1045-4529-adf9-b5ae7e987777)
+
+![RPC流程图](https://github.com/JamieAsura/dlscorridor/assets/37697410/3863e1b1-50fd-46a9-b09c-863c87a0661a)
 
 
 ## 使用示例
