@@ -6,11 +6,9 @@ import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import cn.jamie.dlscorridor.core.meta.ServiceMeta;
 import cn.jamie.dlscorridor.core.registry.RegistryCenter;
 import cn.jamie.dlscorridor.core.meta.ProviderMeta;
-import cn.jamie.dlscorridor.core.registry.RegistryStorage;
 import cn.jamie.dlscorridor.core.util.RpcMethodUtil;
 import cn.jamie.dlscorridor.core.util.RpcReflectUtil;
 import cn.jamie.dlscorridor.core.util.ScanPackageUtil;
-import com.alibaba.fastjson2.JSON;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 
@@ -68,7 +66,7 @@ public class ProviderBootstrap implements ApplicationContextAware {
             List<Class<?>> skeltonInterfaces = RpcReflectUtil.findAnnotationInterfaces(stubImpl, RpcService.class);
             skeltonInterfaces.forEach(skeltonInterface -> {
                 ServiceMeta skltonMeta = ServiceMeta.builder().env(serviceMeta.getEnv()).namespace(serviceMeta.getNamespace()).app(serviceMeta.getApp())
-                        .name(skeltonInterface.getCanonicalName()).version(serviceMeta.getVersion()).build();
+                        .name(skeltonInterface.getCanonicalName()).group(serviceMeta.getGroup()).version(serviceMeta.getVersion()).build();
                 skeltonRegs.add(skltonMeta);
                 skeltonInvokers.putIfAbsent(skeltonInterface.getCanonicalName(), new HashMap<>());
                 Arrays.stream(stubImpl.getDeclaredMethods())
@@ -94,18 +92,10 @@ public class ProviderBootstrap implements ApplicationContextAware {
     }
     @PreDestroy
     public void destroyRegistryCenter() {
-        if (log.isDebugEnabled()) {
-            RegistryStorage registryStorage = applicationContext.getBean(RegistryStorage.class);
-            log.debug(JSON.toJSONString(registryStorage.findAllServiceMetas()));
-        }
         List<ServiceMeta> serviceMetas = providerStorage.findSkeltonRegs();
         InstanceMeta instanceMeta = applicationContext.getBean(InstanceMeta.class);
         RegistryCenter registryCenter = applicationContext.getBean(RegistryCenter.class);
         serviceMetas.forEach(meta -> registryCenter.unregister(meta,instanceMeta));
-        if (log.isDebugEnabled()) {
-            RegistryStorage registryStorage = applicationContext.getBean(RegistryStorage.class);
-            log.debug(JSON.toJSONString(registryStorage.findAllServiceMetas()));
-        }
         providerStorage.cleanUp();
     }
 }

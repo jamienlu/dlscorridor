@@ -48,6 +48,7 @@ public class DlscorridorDemoConsumerApplication {
 	@Bean
 	public ApplicationRunner consumerRunner() {
 		return x -> {
+			Thread.sleep(10000);
 			User user = userService.findById(1L);
 			System.out.println(user);
 			Order order = orderService.findById(1);

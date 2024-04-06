@@ -78,16 +78,16 @@ public class ConsumerBootstrap implements ApplicationContextAware {
         ServiceMeta target = new ServiceMeta();
         BeanUtils.copyProperties(serviceMeta, target);
         target.setApp(jmConsumer.service());
+        target.setGroup(jmConsumer.group());
         target.setName(serviceName);
         target.setVersion(jmConsumer.version());
         services.add(target);
         return target;
     }
     private Object createConsumerFromRegistry(Class<?> service, ServiceMeta serviceMeta, RpcContext rpcContext) {
+        // 创建服务的动态代理需要订阅服务用于远程调用时路由
         registryCenter.subscribe(serviceMeta);
-        List<InstanceMeta> instanceMetas = registryCenter.fectchAll(serviceMeta);
-        log.info("current service instance" + JSON.toJSONString(instanceMetas));
-        return createConsumer(service, rpcContext, instanceMetas);
+        return createConsumer(service, rpcContext, registryCenter.fectchAll(serviceMeta));
     }
     private Object createConsumer(Class<?> service, RpcContext rpcContext, List<InstanceMeta> instanceMetas) {
         return Proxy.newProxyInstance(service.getClassLoader(), new Class[]{service},new JMInvocationHandler(service,rpcContext,instanceMetas));
@@ -99,13 +99,13 @@ public class ConsumerBootstrap implements ApplicationContextAware {
     @PreDestroy
     public void destroy() {
         if (log.isDebugEnabled()) {
-            log.debug("prepare destroy instances" + registryCenter.fectchAll(serviceMeta));
+            log.debug("prepare destroy instances" + JSON.toJSONString(registryCenter.fectchAll(serviceMeta)));
         }
         services.forEach(serviceMeta -> {
             registryCenter.unsubscribe(serviceMeta);
         });
         if (log.isDebugEnabled()) {
-            log.debug("after destroy instances" + registryCenter.fectchAll(serviceMeta));
+            log.debug("after destroy instances" + JSON.toJSONString(registryCenter.fectchAll(serviceMeta)));
         }
     }
 }

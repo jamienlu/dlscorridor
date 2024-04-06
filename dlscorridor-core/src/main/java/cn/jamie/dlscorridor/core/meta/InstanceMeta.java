@@ -49,7 +49,9 @@ public class InstanceMeta {
         assert paras.length > 1;
         return InstanceMeta.builder().host(paras[0]).port(Integer.valueOf(paras[1])).build();
     }
-
+    public void addMeta(String key, String value) {
+        parameters.put(key,value);
+    }
     public String toMetas() {
         return JSON.toJSONString(this.getParameters());
     }

@@ -9,4 +9,5 @@ import java.lang.annotation.*;
 public @interface JMConsumer {
     String service();
     String version() default "";
+    String group() default "DEFAULT_GROUP";
 }

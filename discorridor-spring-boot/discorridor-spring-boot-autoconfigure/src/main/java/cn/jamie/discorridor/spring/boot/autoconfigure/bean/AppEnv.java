@@ -8,9 +8,10 @@ import lombok.Data;
  */
 @Data
 public class AppEnv {
-    private String app;
-    private String namespace;
-    private String env;
-    private String name;
-    private String version;
+    private String app = "discorridor-app";
+    private String namespace = "public";
+    private String env = "dev";
+    private String name = "discorridor-name";
+    private String version = "1.0.0";
+    private String group = "DEFAULT_GROUP";
 }

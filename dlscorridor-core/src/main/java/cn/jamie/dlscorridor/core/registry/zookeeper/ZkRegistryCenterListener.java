@@ -3,11 +3,10 @@ package cn.jamie.dlscorridor.core.registry.zookeeper;
 import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import cn.jamie.dlscorridor.core.meta.ServiceMeta;
 import cn.jamie.dlscorridor.core.registry.RegistryCenterListener;
-import cn.jamie.dlscorridor.core.registry.RegistryStorage;
+import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 注册中心监听器 监听注册中心事件
@@ -18,37 +17,34 @@ import java.util.Map;
  */
 @Slf4j
 public class ZkRegistryCenterListener implements RegistryCenterListener {
-    private final RegistryStorage registryStorage;
+    private final ZkRegistryEvent zkRegistryEvent;
 
-    public ZkRegistryCenterListener(RegistryStorage registryStorage) {
-        this.registryStorage = registryStorage;
+    public ZkRegistryCenterListener(ZkRegistryEvent zkRegistryEvent) {
+        this.zkRegistryEvent = zkRegistryEvent;
     }
 
     @Override
     public void onRegistry(ServiceMeta serviceMeta) {
-        String serverPath = serviceMeta.toPath();
-        log.debug("watch zkClient registry serviceMeta:" + serverPath);
-        registryStorage.saveServiceMeta(serviceMeta);
+        log.debug("watch zkClient registry serviceMeta:" + JSON.toJSONString(serviceMeta));
+        zkRegistryEvent.saveServiceMeta(serviceMeta);
     }
 
     @Override
     public void onUnRegistry(ServiceMeta serviceMeta) {
-        String serverPath = serviceMeta.toPath();
-        log.debug("watch zkClient unregistry serviceMeta:" + serverPath);
-        registryStorage.removeServiceMeta(serverPath);
+        log.debug("watch zkClient unregistry serviceMeta:" + JSON.toJSONString(serviceMeta));
+        zkRegistryEvent.removeServiceMeta(serviceMeta);
     }
 
     @Override
-    public void onSubscribe(ServiceMeta serviceMeta, Map<String, List<InstanceMeta>> instanceMetas) {
-        log.debug("watch zkClient subscribe serviceMeta path:" + serviceMeta.toPath());
-        registryStorage.saveServiceInstanceMetas(serviceMeta, instanceMetas);
+    public void onSubscribe(ServiceMeta serviceMeta, List<InstanceMeta> instanceMetas) {
+        log.debug("watch zkClient subscribe serviceMeta:" + JSON.toJSONString(serviceMeta));
+        zkRegistryEvent.saveServiceInstanceMetas(serviceMeta, instanceMetas);
     }
 
 
     @Override
     public void onUnSubscribe(ServiceMeta serviceMeta) {
-        String serverPath = serviceMeta.toPath();
-        log.debug("watch zkClient unsubscribe serviceMeta:" + serverPath);
-        registryStorage.removeServiceInstanceMetas(serverPath);
+        log.debug("watch zkClient unsubscribe serviceMeta:" + JSON.toJSONString(serviceMeta));
+        zkRegistryEvent.removeServiceInstanceMetas(serviceMeta);
     }
 }

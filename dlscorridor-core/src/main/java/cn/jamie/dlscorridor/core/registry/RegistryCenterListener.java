@@ -4,7 +4,6 @@ import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import cn.jamie.dlscorridor.core.meta.ServiceMeta;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author jamieLu
@@ -28,9 +27,9 @@ public interface RegistryCenterListener {
      * 订阅事件
      *
      * @param serviceMeta 服务元数据
-     * @param instanceMetas 服务版本 和 其实例数据
+     * @param instanceMetas 实例数据
      */
-    void onSubscribe(ServiceMeta serviceMeta, Map<String,List<InstanceMeta>> instanceMetas);
+    void onSubscribe(ServiceMeta serviceMeta,  List<InstanceMeta> instanceMetas);
     /**
      * 反订阅事件
      *

@@ -22,7 +22,7 @@ public class DiscorridorAutoConfigure {
     private AppEnv env;
     @Bean
     public ServiceMeta serviceMeta() {
-        return ServiceMeta.builder().app(env.getApp()).namespace(env.getNamespace()).env(env.getEnv()).name(env.getName()).version(env.getVersion())
+        return ServiceMeta.builder().app(env.getApp()).namespace(env.getNamespace()).env(env.getEnv()).group(env.getGroup()).name(env.getName()).version(env.getVersion())
                 .build();
     }
 }

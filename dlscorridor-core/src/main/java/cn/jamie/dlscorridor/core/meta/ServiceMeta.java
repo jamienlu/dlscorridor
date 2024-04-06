@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -23,12 +24,14 @@ public class ServiceMeta {
     private String namespace;
     private String env;
     private String name;
+    private String group;
     private String version;
+
     @Builder.Default
-    private Map<String,String> parameters = Map.of("meta","services");
+    private Map<String,String> parameters = new HashMap<>();
 
     public String toPath() {
-        return String.format("%s_%s_%s_%s",app,namespace,env,name);
+        return String.format("%s_%s_%s_%s_%s",app,namespace,env,group,name);
     }
 
     public String toMetas() {

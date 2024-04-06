@@ -7,10 +7,12 @@ discorridor:
     env: dev
     name: customer-v1
     version: 1.0.0
+    group: DEFAULT_GROUP
   registry:
     env:
+      type: nacos
       namespace: public
-      url: 192.168.0.101:2181
+      url: 192.168.0.101:8848,192.168.0.101:8849,192.168.0.101:8850
       over-time: 1000
       retry-count: 3
   consumer:
