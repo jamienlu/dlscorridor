@@ -32,7 +32,7 @@ public class DlscorridorDemoConsumerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DlscorridorDemoConsumerApplication.class, args);
 	}
-	@RequestMapping("/user/id")
+	@RequestMapping("/user/get")
 	public User findBy(@RequestParam("id") int id) {
 		return userService.findById(id);
 	}

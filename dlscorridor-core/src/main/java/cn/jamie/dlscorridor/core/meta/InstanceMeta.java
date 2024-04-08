@@ -5,6 +5,7 @@ import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = {"schema","host","port"})
 public class InstanceMeta {
     private String schema;
     private String host;
@@ -55,18 +57,5 @@ public class InstanceMeta {
     }
     public String toMetas() {
         return JSON.toJSONString(this.getParameters());
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        InstanceMeta that = (InstanceMeta) o;
-        return Objects.equal(host, that.host) && Objects.equal(port, that.port);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(host, port);
     }
 }

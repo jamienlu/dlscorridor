@@ -11,6 +11,6 @@ public class FaultEnv {
     private Integer timeout = 2000;
     private Integer retry = 3;
     private Integer faultLimit = 5;
-    private Integer halfOpenDelay = 60000;
-    private Integer halfOpenInitialDelay = 10000;
+    private Integer halfOpenDelay = 60;
+    private Integer halfOpenInitialDelay = 10;
 }

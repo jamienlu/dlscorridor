@@ -1,12 +1,17 @@
 package cn.jamie.discorridor.spring.boot.autoconfigure;
 
+import cn.jamie.discorridor.spring.boot.autoconfigure.bean.GrayEnv;
+import cn.jamie.dlscorridor.core.constant.MetaConstant;
 import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import cn.jamie.dlscorridor.core.provider.ProviderBootstrap;
 import cn.jamie.dlscorridor.core.provider.ProviderInvoker;
 import cn.jamie.dlscorridor.core.provider.ProviderStorage;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -22,12 +27,12 @@ import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfig
  */
 @Configuration
 @ConditionalOnProperty(prefix = PROVIDER_PREFIX, name = "enable")
+@ConfigurationProperties(prefix = PROVIDER_PREFIX)
 @AutoConfigureAfter({DiscorridorAutoConfigure.class, RegistryConfiguration.class})
+@Data
 public class ProviderAutoConfigure {
-    @Value("${server.port}")
-    private int port;
-    @Value("${discorridor.provider.gray:false}")
-    private boolean gray;
+    private int port = 8080;
+    private boolean gray = false;
     @Bean
     public ProviderStorage providerStorage() {
         return new ProviderStorage();
@@ -52,7 +57,7 @@ public class ProviderAutoConfigure {
         }
         InstanceMeta instanceMeta = InstanceMeta.builder().host(ip).port(port).build();
         if (gray) {
-            instanceMeta.getParameters().put("gray", "true");
+            instanceMeta.getParameters().put(MetaConstant.GRAY, "true");
         }
         return instanceMeta;
     }

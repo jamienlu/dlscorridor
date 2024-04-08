@@ -55,11 +55,10 @@ public class StubInvokerHandler implements RpcInvokeHandler {
         int retry = handlerParam.getRetry();
         while (retry-- > 0) {
             log.debug("retry rpc handler can invoke count:" + retry);
-            // 1.rpc实例选择
-            if (!halfOpenInstanceMetas.isEmpty()) {
+            // 1.rpc实例选择  使用并发集合remove代替锁
+            if (!halfOpenInstanceMetas.isEmpty() && (instanceMeta = halfOpenInstanceMetas.remove(0)) != null) {
                 // 故障探活
                 log.debug("rpc handler type halfOpen");
-                instanceMeta = halfOpenInstanceMetas.remove(0);
             } else {
                 // 路由负载策略
                 log.debug("rpc handler type route balance");
@@ -83,19 +82,19 @@ public class StubInvokerHandler implements RpcInvokeHandler {
                 window.record(System.currentTimeMillis());
                 if (window.getSum() > handlerParam.getFaultLimit()) {
                     log.error("instance {} is error, isolatedInstanceMetas={}, instanceMetas={}", instanceMeta, isolatedInstanceMetas, instanceMetas);
+                    // retry会失败
                     instanceMetas.remove(instanceMeta);
                     isolatedInstanceMetas.add(instanceMeta);
                 }
                 continue;
             }
-            // 4.rpc 探活恢复
+            // 4.rpc 探活恢复  使用并发集合remove代替锁
             // 重写instance equal 避免原引用和故障对象不一致
-            synchronized (instanceMetas) {
+            if (isolatedInstanceMetas.remove(instanceMeta)) {
                 if (!instanceMetas.contains(instanceMeta)) {
-                    isolatedInstanceMetas.remove(instanceMeta);
                     instanceMetas.add(instanceMeta);
-                    log.debug("instance {} is recovered, isolatedInstanceMetas={}, instanceMetas={}", instanceMeta, isolatedInstanceMetas, instanceMetas);
                 }
+                log.debug("instance {} is recovered, isolatedInstanceMetas={}, instanceMetas={}", instanceMeta, isolatedInstanceMetas, instanceMetas);
             }
             return rpcResponse;
         }

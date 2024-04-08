@@ -45,72 +45,33 @@ public abstract class AbstractRegistryEvent implements RegistryEvent {
 
     @Override
     public void saveServiceInstanceMetas(ServiceMeta service, List<InstanceMeta> instanceMetas) {
-        // 订阅和节点变化都是全量数据
         String key = RegistryUtil.serviceMetaKey(service);
+        // 订阅和节点变化都是全量数据 先清除
+        if (instancesVersions.containsKey(key)) {
+            instancesVersions.clear();
+        }
+        if (serverInstanceMetas.containsKey(key)) {
+            serverInstanceMetas.clear();
+        }
+        if (serverVersionInstanceMetas.containsKey(key)) {
+            serverVersionInstanceMetas.clear();
+        }
         // 存版本 升序便于查找大于等于需要的版本数据
         List<String> versions = instanceMetas.stream()
                 .map(x -> x.getParameters().getOrDefault(MetaConstant.VERSION,MetaConstant.VERSION_DEFAULT))
                 .sorted(VersionUtil::compareVersion).distinct().toList();
-        if (!instancesVersions.containsKey(key)) {
-            instancesVersions.put(key, new ArrayList<>());
-        }
+        instancesVersions.putIfAbsent(key, new ArrayList<>());
         instancesVersions.get(key).addAll(versions);
         // 存实例
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        if (!serverInstanceMetas.containsKey(key)) {
-            serverInstanceMetas.put(key, new ArrayList<>());
-        }
+        serverInstanceMetas.putIfAbsent(key, new ArrayList<>());
         serverInstanceMetas.get(key).addAll(instanceMetas);
         // 存版本实例
-        if (!serverVersionInstanceMetas.containsKey(key)) {
-            serverVersionInstanceMetas.put(key, new HashMap<>());
-        }
-        serverVersionInstanceMetas.get(key).putAll(instanceMetas.stream().collect(Collectors.groupingBy(ins -> ins.getParameters().getOrDefault("version","default"))));;
+        serverVersionInstanceMetas.putIfAbsent(key, new HashMap<>());
+        Map<String,List<InstanceMeta>> versionInstanceMetas = instanceMetas.stream().collect(Collectors.groupingBy(ins -> ins.getParameters().getOrDefault(MetaConstant.VERSION, MetaConstant.VERSION_DEFAULT)));
+        versionInstanceMetas.forEach((version, list) -> {
+            serverVersionInstanceMetas.get(key).putIfAbsent(version, new ArrayList<>());
+            serverVersionInstanceMetas.get(key).get(version).addAll(list);
+        });
         log.info("save success serviceMeta key:" + key + " instanceMetas##size:" + instanceMetas.size());
     }
 

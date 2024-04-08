@@ -17,6 +17,7 @@ discorridor:
   provider:
     enable: true
     gray: false
+    port: 8080
 
 logging:
   level:

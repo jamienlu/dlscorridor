@@ -1,11 +1,9 @@
 ### 获取consumer用户信息
-GET http://localhost:8801/user/id?id=123
-### 获取consumer订单信息
-GET http://localhost:8801/order?id=101
+GET http://localhost:8801/user/get?id=15
 ### 获取consumer超时信息
-GET http://localhost:8801/user/out?id=99
+GET http://localhost:8801/user/out?id=120
 ### 获取mix用户信息
-GET http://localhost:8901/user/id?id=123
+GET http://localhost:8901/user/get?id=123
 ### ### 获取consumer支付信息
 GET http://localhost:8801/pay?userId=123&orderId=456
 
