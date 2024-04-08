@@ -34,6 +34,8 @@ public class RpcException extends RuntimeException {
     public static final String NO_TOKEN  = "X004" + "-" + "too fast! no token use";
 
     public static final String NO_NACOS_SERVER  = "X005" + "-" + "nacos_server_error";
-    public static final String NO_NACOS_INSTANCE  = "X005" + "-" + "nacos_instance_error";
+    public static final String NO_NACOS_INSTANCE  = "X006" + "-" + "nacos_instance_error";
+
+    public static final String HTTP_ERROR  = "X007" + "-" + "http_error";
     public static final String UNKNOWN_EX = "Z001" + "-" + "unknown";
 }

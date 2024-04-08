@@ -1,5 +1,7 @@
 package cn.jamie.dlscorridor.core.provider;
 
+import cn.jamie.dlscorridor.core.api.RpcContext;
+import cn.jamie.dlscorridor.core.api.RpcInvokeHandler;
 import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.api.RpcResponse;
 import cn.jamie.dlscorridor.core.exception.RpcException;
@@ -16,8 +18,8 @@ import java.util.Arrays;
  * @create 2024-03-20
  */
 @Slf4j
-public class ProviderInvoker {
-    private ProviderStorage providerStorage;
+public class ProviderInvoker implements RpcInvokeHandler {
+    private final ProviderStorage providerStorage;
 
     public ProviderInvoker(ProviderStorage providerStorage) {
         this.providerStorage = providerStorage;
@@ -29,8 +31,15 @@ public class ProviderInvoker {
      * @param rpcRequest 调用对象
      * @return RpcResponse 调用结果
      */
-    public RpcResponse invoke(RpcRequest rpcRequest) {
+    @Override
+    public RpcResponse doInvoke(RpcRequest rpcRequest) {
+        log.debug(" ===> ProviderInvoker.invoke(request:{})", rpcRequest);
         RpcResponse rpcResponse = RpcResponse.builder().build();
+        // 设置线程上下文环境参数
+        if(!rpcRequest.getParameters().isEmpty()) {
+            log.debug("providerInvoker invoker add thread context!");
+            rpcRequest.getParameters().forEach(RpcContext::setContextParameter);
+        }
         ProviderMeta providerMeta = providerStorage.findProviderMeta(rpcRequest.getService(),rpcRequest.getMethodSign());
         if (providerMeta != null) {
             Object data = null;
@@ -52,6 +61,9 @@ public class ProviderInvoker {
                 rpcResponse.setEx(new RpcException(e.getTargetException().getMessage()));
             } catch (IllegalAccessException e) {
                 rpcResponse.setEx(new RpcException(e.getCause(),e.getMessage()));
+            } finally {
+                log.debug("providerInvoker contextParameters param:{}", RpcContext.contextParameters.get());
+                RpcContext.contextParameters.get().clear();
             }
         } else {
             rpcResponse.setEx(new RpcException(RpcException.NO_SUCH_METHOD_EX));

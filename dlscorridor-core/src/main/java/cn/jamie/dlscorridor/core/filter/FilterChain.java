@@ -1,5 +1,6 @@
 package cn.jamie.dlscorridor.core.filter;
 
+import cn.jamie.dlscorridor.core.api.RpcInvokeHandler;
 import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.api.RpcResponse;
 
@@ -17,7 +18,7 @@ public interface FilterChain {
      *
      * @param rpcRequest 请求
      * @param rpcResponse 响应
-     * @param rpcInvoke rpc函数
+     * @param rpcInvokeHandler rpc函数处理器
      */
-    void doFilter(RpcRequest rpcRequest, RpcResponse rpcResponse, Function<RpcRequest,RpcResponse> rpcInvoke);
+    void doFilter(RpcRequest rpcRequest, RpcResponse rpcResponse, RpcInvokeHandler rpcInvokeHandler);
 }

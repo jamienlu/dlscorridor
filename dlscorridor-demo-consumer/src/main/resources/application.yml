@@ -21,6 +21,9 @@ discorridor:
       - type: token
         token-size: 1000
         token-seconds: 100
+
+      - type: context
+
       - type: cache
         cache-size: 100
         cache-seconds: 60

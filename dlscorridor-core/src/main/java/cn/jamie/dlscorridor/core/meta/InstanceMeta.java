@@ -1,6 +1,7 @@
 package cn.jamie.dlscorridor.core.meta;
 
 import com.alibaba.fastjson2.JSON;
+import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -56,4 +57,16 @@ public class InstanceMeta {
         return JSON.toJSONString(this.getParameters());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InstanceMeta that = (InstanceMeta) o;
+        return Objects.equal(host, that.host) && Objects.equal(port, that.port);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(host, port);
+    }
 }

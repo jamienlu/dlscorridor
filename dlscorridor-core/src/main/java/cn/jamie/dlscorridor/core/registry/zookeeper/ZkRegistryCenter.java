@@ -1,5 +1,6 @@
 package cn.jamie.dlscorridor.core.registry.zookeeper;
 
+import cn.jamie.dlscorridor.core.constant.MetaConstant;
 import cn.jamie.dlscorridor.core.exception.RpcException;
 import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import cn.jamie.dlscorridor.core.meta.ServiceMeta;
@@ -109,7 +110,7 @@ public class ZkRegistryCenter implements RegistryCenter {
                 client.create().withMode(CreateMode.PERSISTENT).forPath(serviceNode,JSON.toJSONBytes(service.getParameters()));
             }
             // 根据服务信息修改实例信息
-            instance.addMeta("version",service.getVersion());
+            instance.addMeta(MetaConstant.VERSION,service.getVersion());
             String instancePath = serviceNode + "/" + instance.toPath();
             client.create().withMode(CreateMode.EPHEMERAL).forPath(instancePath, JSON.toJSONBytes(instance.getParameters()));
             log.info("create zk registry instance path:" + instancePath);
@@ -191,7 +192,7 @@ public class ZkRegistryCenter implements RegistryCenter {
         }
         if (null != service.getVersion() && !service.getVersion().isEmpty()) {
             result = result.stream().filter(x -> {
-                String curVersion = x.getParameters().get("version");
+                String curVersion = x.getParameters().get(MetaConstant.VERSION);
                 return VersionUtil.compareVersion(curVersion, service.getVersion()) >= 0;
             }).collect(Collectors.toList());
         }

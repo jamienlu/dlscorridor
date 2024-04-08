@@ -90,7 +90,7 @@ public class ConsumerBootstrap implements ApplicationContextAware {
         return createConsumer(service, rpcContext, registryCenter.fectchAll(serviceMeta));
     }
     private Object createConsumer(Class<?> service, RpcContext rpcContext, List<InstanceMeta> instanceMetas) {
-        return Proxy.newProxyInstance(service.getClassLoader(), new Class[]{service},new JMInvocationHandler(service,rpcContext,instanceMetas));
+        return Proxy.newProxyInstance(service.getClassLoader(), new Class[]{service},new CustomerProxy(service,rpcContext,instanceMetas));
     }
 
     /**

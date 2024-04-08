@@ -1,5 +1,6 @@
 package cn.jamie.dlscorridor.core.registry;
 
+import cn.jamie.dlscorridor.core.constant.MetaConstant;
 import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import cn.jamie.dlscorridor.core.meta.ServiceMeta;
 import cn.jamie.dlscorridor.core.util.VersionUtil;
@@ -48,13 +49,59 @@ public abstract class AbstractRegistryEvent implements RegistryEvent {
         String key = RegistryUtil.serviceMetaKey(service);
         // 存版本 升序便于查找大于等于需要的版本数据
         List<String> versions = instanceMetas.stream()
-                .map(x -> x.getParameters().getOrDefault("version","default"))
+                .map(x -> x.getParameters().getOrDefault(MetaConstant.VERSION,MetaConstant.VERSION_DEFAULT))
                 .sorted(VersionUtil::compareVersion).distinct().toList();
         if (!instancesVersions.containsKey(key)) {
             instancesVersions.put(key, new ArrayList<>());
         }
-        // 存实例
         instancesVersions.get(key).addAll(versions);
+        // 存实例
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         if (!serverInstanceMetas.containsKey(key)) {
             serverInstanceMetas.put(key, new ArrayList<>());
         }
@@ -80,7 +127,7 @@ public abstract class AbstractRegistryEvent implements RegistryEvent {
     public List<InstanceMeta> searchInstanceMetas(ServiceMeta service) {
         String key = RegistryUtil.serviceMetaKey(service);
         // 未指定需要的版本
-        if (service.getVersion().equals("default")) {
+        if (service.getVersion().equals(MetaConstant.VERSION_DEFAULT)) {
             log.debug("search no version instanceMetas");
             return serverInstanceMetas.get(key);
         } else {

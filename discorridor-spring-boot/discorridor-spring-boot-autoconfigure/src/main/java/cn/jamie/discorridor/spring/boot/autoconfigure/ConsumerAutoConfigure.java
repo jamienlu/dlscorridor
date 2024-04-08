@@ -13,9 +13,11 @@ import cn.jamie.dlscorridor.core.cluster.RoundLoadBalance;
 import cn.jamie.dlscorridor.core.consumer.ConsumerBootstrap;
 import cn.jamie.dlscorridor.core.filter.CacheFilter;
 import cn.jamie.dlscorridor.core.filter.FilterChain;
+import cn.jamie.dlscorridor.core.filter.RpcContextFilter;
 import cn.jamie.dlscorridor.core.filter.RpcFilterChain;
 import cn.jamie.dlscorridor.core.filter.TokenFilter;
 
+import cn.jamie.dlscorridor.core.transform.HttpRpcTransform;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
@@ -34,6 +36,7 @@ import java.util.Map;
 
 import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.CONSUMER_PREFIX;
 import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.FILTER_CACHE;
+import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.FILTER_CONTEXT;
 import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.FILTER_TOKEN;
 import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.LOADBALANCE_RANDOM;
 import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.LOADBALANCE_ROUND;
@@ -80,6 +83,9 @@ public class ConsumerAutoConfigure {
             if (FILTER_TOKEN.equals(filter.getType())) {
                 filterChain.addFilter(new TokenFilter(filter.getTokenSize(),filter.getTokenSeconds()));
             }
+            if (FILTER_CONTEXT.equals(filter.getType())) {
+                filterChain.addFilter(new RpcContextFilter());
+            }
             if (FILTER_CACHE.equals(filter.getType())) {
                 filterChain.addFilter(new CacheFilter(filter.getCacheSize(), filter.getCacheSeconds()));
             }
@@ -94,7 +100,7 @@ public class ConsumerAutoConfigure {
         parameters.put("app.faultLimit", String.valueOf(fault.getFaultLimit()));
         parameters.put("app.halfOpenDelay", String.valueOf(fault.getHalfOpenDelay()));
         parameters.put("app.halfOpenInitialDelay", String.valueOf(fault.getHalfOpenInitialDelay()));
-        return RpcContext.builder().router(router).loadBalancer(loadBalancer).filterChain(filterChain).parameters(parameters).build();
+        return RpcContext.builder().router(router).loadBalancer(loadBalancer).filterChain(filterChain).transform(new HttpRpcTransform()).parameters(parameters).build();
     }
     @Bean
     @Order(Integer.MIN_VALUE)

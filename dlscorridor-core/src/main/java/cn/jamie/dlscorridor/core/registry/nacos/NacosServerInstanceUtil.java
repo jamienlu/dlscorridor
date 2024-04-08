@@ -1,5 +1,6 @@
 package cn.jamie.dlscorridor.core.registry.nacos;
 
+import cn.jamie.dlscorridor.core.constant.MetaConstant;
 import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import cn.jamie.dlscorridor.core.meta.ServiceMeta;
 import com.alibaba.nacos.api.naming.pojo.Instance;
@@ -18,13 +19,13 @@ public class NacosServerInstanceUtil {
         service.setName(serviceMeta.getName());
         service.setGroupName(serviceMeta.getGroup());
         service.setMetadata(serviceMeta.getParameters());
-        service.getMetadata().put("version", serviceMeta.getVersion());
+        service.getMetadata().put(MetaConstant.VERSION, serviceMeta.getVersion());
         return service;
     }
 
     public static ServiceMeta convertNacosServer(Service service) {
         Map<String,String> metas = service.getMetadata();
-        String version = metas.remove("version");
+        String version = metas.remove(MetaConstant.VERSION);
         return ServiceMeta.builder().app(service.getAppName()).name(service.getName())
             .group(service.getGroupName()).parameters(service.getMetadata()).version(version).build();
     }

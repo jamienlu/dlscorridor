@@ -9,4 +9,6 @@ public interface UserService {
     List<User> search(User user);
 
     User findTimeout(long ids);
+
+    String context(String key);
 }

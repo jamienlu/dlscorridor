@@ -4,6 +4,7 @@ import cn.jamie.discorridor.demo.api.User;
 import cn.jamie.discorridor.demo.api.UserService;
 import cn.jamie.dlscorridor.core.annotation.JMProvider;
 import cn.jamie.dlscorridor.core.annotation.RpcService;
+import cn.jamie.dlscorridor.core.api.RpcContext;
 import cn.jamie.dlscorridor.core.exception.RpcException;
 
 import java.util.List;
@@ -33,5 +34,10 @@ public class UserServiceImpl implements  @RpcService UserService {
             throw new RpcException(RpcException.SOCKET_TIMEOUT_EX);
         }
         return new User(1, "|jamie-" + System.currentTimeMillis());
+    }
+
+    @Override
+    public String context(String key) {
+        return RpcContext.getContextParameter(key);
     }
 }

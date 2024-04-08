@@ -27,6 +27,6 @@ public class ProviderController {
     private ProviderInvoker providerInvoker;
     @PostMapping("/rpc/services")
     public RpcResponse invoke (@RequestBody RpcRequest rpcRequest) {
-        return providerInvoker.invoke(rpcRequest);
+        return providerInvoker.doInvoke(rpcRequest);
     }
 }

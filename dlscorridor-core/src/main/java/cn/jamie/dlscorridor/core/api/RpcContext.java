@@ -3,11 +3,13 @@ package cn.jamie.dlscorridor.core.api;
 import cn.jamie.dlscorridor.core.cluster.LoadBalancer;
 import cn.jamie.dlscorridor.core.cluster.Router;
 import cn.jamie.dlscorridor.core.filter.FilterChain;
+import cn.jamie.dlscorridor.core.transform.RpcTransform;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -27,4 +29,21 @@ public class RpcContext {
     private LoadBalancer loadBalancer;
     // 参数列表
     private Map<String,String> parameters;
+    // 传输协议
+    private RpcTransform transform;
+
+    // 线程上下文参数
+    public static ThreadLocal<Map<String,String>> contextParameters = ThreadLocal.withInitial(HashMap::new);
+
+    public static void setContextParameter(String key, String value) {
+        contextParameters.get().put(key, value);
+    }
+
+    public static String getContextParameter(String key) {
+        return contextParameters.get().get(key);
+    }
+
+    public static void removeContextParameter(String key) {
+        contextParameters.get().remove(key);
+    }
 }

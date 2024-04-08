@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -16,8 +18,8 @@ public class RpcRequest {
     private String service;
     // 请求方法名
     private String methodSign;
-    // not use 与请求参数一一对应代理方法签名
-    private List<Class<?>> methodParaTypes;
     // 请求参数
     private Object[] args;
+    // 透传参数给RPC环境上下文
+    private Map<String,String> parameters = new HashMap<>();
 }

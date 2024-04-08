@@ -1,5 +1,6 @@
 package cn.jamie.dlscorridor.core.cluster;
 
+import cn.jamie.dlscorridor.core.constant.MetaConstant;
 import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,8 +27,8 @@ public class GrayRouter implements Router {
         if (instanceMetas==null || instanceMetas.size() <= 1) {
             return instanceMetas;
         }
-        List<InstanceMeta> grayInstances = instanceMetas.stream().filter(x -> x.getParameters().containsKey("gray")).collect(Collectors.toList());
-        List<InstanceMeta> normalInstances = instanceMetas.stream().filter(x -> !x.getParameters().containsKey("gray")).collect(Collectors.toList());
+        List<InstanceMeta> grayInstances = instanceMetas.stream().filter(x -> x.getParameters().containsKey(MetaConstant.GRAY)).collect(Collectors.toList());
+        List<InstanceMeta> normalInstances = instanceMetas.stream().filter(x -> !x.getParameters().containsKey(MetaConstant.GRAY)).collect(Collectors.toList());
         log.debug(" grayRouter grayNodes/normalNodes,grayRatio ===> {}/{},{}",
                 grayInstances.size(), normalInstances.size(), grayRatio);
         if (grayInstances.isEmpty() || normalInstances.isEmpty()) {

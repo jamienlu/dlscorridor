@@ -1,5 +1,6 @@
 package cn.jamie.dlscorridor.core.filter;
 
+import cn.jamie.dlscorridor.core.api.RpcInvokeHandler;
 import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.api.RpcResponse;
 import cn.jamie.dlscorridor.core.util.RpcUtil;
@@ -38,12 +39,12 @@ public class CacheFilter implements Filter {
                 });
     }
     @Override
-    public void filter(RpcRequest rpcRequest, RpcResponse rpcResponse, Function<RpcRequest,RpcResponse> rpcInvoke, FilterChain filterChain) {
+    public void filter(RpcRequest rpcRequest, RpcResponse rpcResponse, RpcInvokeHandler rpcInvokeHandler, FilterChain filterChain) {
         log.info("start cache filter:" + rpcRequest);
         RpcResponse result = guravaCache.getIfPresent(rpcRequest.toString());
         if (result == null) {
             log.info("not fount cache key:" + rpcRequest);
-            filterChain.doFilter(rpcRequest,rpcResponse,rpcInvoke);
+            filterChain.doFilter(rpcRequest,rpcResponse,rpcInvokeHandler);
             // 返回的结果无异常才缓存
             if (rpcResponse.isStatus()) {
                 log.info("save cache value:" + JSON.toJSONString(rpcResponse));

@@ -6,6 +6,7 @@ import cn.jamie.discorridor.demo.api.PayService;
 import cn.jamie.discorridor.demo.api.User;
 import cn.jamie.discorridor.demo.api.UserService;
 import cn.jamie.dlscorridor.core.annotation.JMConsumer;
+import cn.jamie.dlscorridor.core.api.RpcContext;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -48,10 +49,14 @@ public class DlscorridorDemoConsumerApplication {
 	@Bean
 	public ApplicationRunner consumerRunner() {
 		return x -> {
-			Thread.sleep(10000);
 			User user = userService.findById(1L);
 			System.out.println(user);
+/*
+			RpcContext.setContextParameter("time", String.valueOf(System.currentTimeMillis()));
+*/
+			System.out.println(userService.context("time"));
 			Order order = orderService.findById(1);
+			System.out.println(userService.context("time"));
 			System.out.println(order);
 			List<Order> tt = orderService.findByIds(new int[]{1,2});
 			System.out.println(tt);
@@ -59,7 +64,7 @@ public class DlscorridorDemoConsumerApplication {
 			System.out.println(orders);
 			System.out.println(orderService.findByIds(new Integer[]{1,2}));;
 			/*System.out.println(orderService.findById(404));*/
-			System.out.println(userService.findById(1L));
+
 			System.out.println(userService.search(user));
 			System.out.println(userService.find(null));
 		};

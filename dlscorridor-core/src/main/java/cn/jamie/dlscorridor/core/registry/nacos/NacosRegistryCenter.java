@@ -1,5 +1,6 @@
 package cn.jamie.dlscorridor.core.registry.nacos;
 
+import cn.jamie.dlscorridor.core.constant.MetaConstant;
 import cn.jamie.dlscorridor.core.exception.RpcException;
 import cn.jamie.dlscorridor.core.meta.InstanceMeta;
 import cn.jamie.dlscorridor.core.meta.ServiceMeta;
@@ -105,8 +106,8 @@ public class NacosRegistryCenter implements RegistryCenter {
     private List<InstanceMeta> fetchAllNacos(ServiceMeta service) {
         try {
             List<Instance> instances;
-            if (service.getParameters().containsKey("clusterName")) {
-                String clusterName = service.getParameters().get("clusterName");
+            if (service.getParameters().containsKey(MetaConstant.UNIT_DC)) {
+                String clusterName = service.getParameters().get(MetaConstant.UNIT_DC);
                 instances = namingService.selectInstances(service.getName(), List.of(clusterName),true);
             } else {
                 instances = namingService.selectInstances(service.getName(),true);
@@ -122,8 +123,8 @@ public class NacosRegistryCenter implements RegistryCenter {
     public void subscribe(ServiceMeta service) {
         log.debug("nacos center subscribe service:" + JSON.toJSONString(service));
         try {
-            if (service.getParameters().containsKey("clusterName")) {
-                String clusterName = service.getParameters().get("clusterName");
+            if (service.getParameters().containsKey(MetaConstant.UNIT_DC)) {
+                String clusterName = service.getParameters().get(MetaConstant.UNIT_DC);
                 namingService.subscribe(service.getName(), service.getGroup(), List.of(clusterName), event -> {
                     handlerNacosEvent(service, event);
                 });
@@ -154,8 +155,8 @@ public class NacosRegistryCenter implements RegistryCenter {
     @Override
     public void unsubscribe(ServiceMeta service) {
         try {
-            if (service.getParameters().containsKey("clusterName")) {
-                String clusterName = service.getParameters().get("clusterName");
+            if (service.getParameters().containsKey(MetaConstant.UNIT_DC)) {
+                String clusterName = service.getParameters().get(MetaConstant.UNIT_DC);
                 namingService.unsubscribe(service.getName(), service.getGroup(), List.of(clusterName), event -> {
                     listenerEvent((listener -> listener.onUnSubscribe(service)));
                 });
