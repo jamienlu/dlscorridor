@@ -12,6 +12,10 @@
     <name>discorridor-demo-api</name>
     <description>discorridor-demo-api</description>
 
+    <properties>
+        <skip_maven_deploy>true</skip_maven_deploy>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>

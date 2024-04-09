@@ -12,6 +12,10 @@
     <name>discorridor-demo-mix</name>
     <description>discorridor-demo-mix</description>
 
+    <properties>
+        <skip_maven_deploy>true</skip_maven_deploy>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>

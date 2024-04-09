@@ -12,6 +12,10 @@
     <name>dlscorridor-demo-provider</name>
     <description>dlscorridor-demo-provider</description>
 
+    <properties>
+        <skip_maven_deploy>true</skip_maven_deploy>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -46,7 +50,6 @@
             <version>${rpc.version}</version>
         </dependency>
     </dependencies>
-
 
     <build>
         <plugins>

@@ -11,6 +11,11 @@
 	<version>${rpc.version}</version>
 	<name>dlscorridor-demo-consumer</name>
 	<description>dlscorridor-demo-consumer</description>
+
+	<properties>
+		<skip_maven_deploy>true</skip_maven_deploy>
+	</properties>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -22,6 +27,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
