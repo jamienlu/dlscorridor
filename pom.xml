@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>cn.jamie</groupId>
+    <groupId>io.github.jamieasura</groupId>
     <artifactId>dlscorridor</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${rpc.version}</version>
     <name>dlscorridor</name>
     <description>dlscorridor</description>
     <packaging>pom</packaging>
@@ -13,7 +13,37 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <spring.boot.version>3.2.3</spring.boot.version>
+        <rpc.version>1.0.0-SNAPSHOT</rpc.version>
     </properties>
+    <url>https://github.com/jamienlu/dlscorridor</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/jamienlu/dlscorridor/issues</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:git:https://github.com/jamienlu/dlscorridor.git</connection>
+        <developerConnection>scm:git:https://github.com/jamienlu/dlscorridor.git</developerConnection>
+        <url>https://github.com/jamienlu/dlscorridor</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>jamielu</name>
+            <email>77570648@qq.com</email>
+            <url>http://jamielu.cn</url>
+        </developer>
+    </developers>
+
     <modules>
         <module>dlscorridor-core</module>
         <module>discorridor-demo-api</module>
@@ -22,5 +52,35 @@
         <module>discorridor-demo-mix</module>
         <module>discorridor-spring-boot</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>oss</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <phase>clean</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

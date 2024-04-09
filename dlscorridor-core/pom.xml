@@ -3,12 +3,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>cn.jamie</groupId>
+        <groupId>io.github.jamieasura</groupId>
         <artifactId>dlscorridor</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${rpc.version}</version>
     </parent>
     <artifactId>dlscorridor-core</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${rpc.version}</version>
     <name>dlscorridor-core</name>
     <description>dlscorridor-core</description>
     <dependencies>

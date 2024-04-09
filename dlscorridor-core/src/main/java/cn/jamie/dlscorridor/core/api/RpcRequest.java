@@ -21,5 +21,6 @@ public class RpcRequest {
     // 请求参数
     private Object[] args;
     // 透传参数给RPC环境上下文
+    @Builder.Default
     private Map<String,String> parameters = new HashMap<>();
 }
