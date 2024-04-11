@@ -2,6 +2,8 @@ package cn.jamie.discorridor.spring.boot.autoconfigure;
 
 import cn.jamie.discorridor.spring.boot.autoconfigure.bean.AppEnv;
 import cn.jamie.dlscorridor.core.meta.ServiceMeta;
+import cn.jamie.dlscorridor.core.serialization.FastJson2Serializer;
+import cn.jamie.dlscorridor.core.serialization.SerializationService;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -20,9 +22,17 @@ import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfig
 public class DiscorridorAutoConfigure {
     @NestedConfigurationProperty
     private AppEnv env;
+    private String serialization = "fastjson2";
     @Bean
     public ServiceMeta serviceMeta() {
         return ServiceMeta.builder().app(env.getApp()).namespace(env.getNamespace()).env(env.getEnv()).group(env.getGroup()).name(env.getName()).version(env.getVersion())
                 .build();
+    }
+    @Bean
+    public SerializationService serializationService() {
+        if ("fastjson2".equals(serialization)) {
+            return new FastJson2Serializer();
+        }
+        return new FastJson2Serializer();
     }
 }

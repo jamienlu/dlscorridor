@@ -13,7 +13,8 @@ public class AutoConfigurationConst {
     public static final String CONSUMER_PREFIX = DISCORRIDOR_PREFIX + PROPERTY_NAME_SEPARATOR + "consumer";
     public static final String PROVIDER_PREFIX = DISCORRIDOR_PREFIX + PROPERTY_NAME_SEPARATOR + "provider";
     public static final String REGISTRY_PREFIX = DISCORRIDOR_PREFIX + PROPERTY_NAME_SEPARATOR + "registry";
-
+    public static final String TRANSFORM_PREFIX = DISCORRIDOR_PREFIX + PROPERTY_NAME_SEPARATOR + "transform";
+    public static final String TRANSFORM_NETTY = TRANSFORM_PREFIX + PROPERTY_NAME_SEPARATOR + "netty";
     public static final String LOADBALANCE_ROUND = "round";
     public static final String LOADBALANCE_RANDOM = "random";
 

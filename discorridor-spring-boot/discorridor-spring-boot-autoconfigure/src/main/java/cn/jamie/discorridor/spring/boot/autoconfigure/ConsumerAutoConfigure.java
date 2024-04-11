@@ -17,11 +17,17 @@ import cn.jamie.dlscorridor.core.filter.RpcContextFilter;
 import cn.jamie.dlscorridor.core.filter.RpcFilterChain;
 import cn.jamie.dlscorridor.core.filter.TokenFilter;
 
-import cn.jamie.dlscorridor.core.transform.HttpRpcTransform;
+import cn.jamie.dlscorridor.core.serialization.SerializationService;
+import cn.jamie.dlscorridor.core.transform.http.HttpRpcTransform;
+import cn.jamie.dlscorridor.core.transform.netty.NettyRpcTransform;
+import cn.jamie.dlscorridor.core.transform.RpcTransform;
+import cn.jamie.dlscorridor.core.transform.http.HttpConf;
+import cn.jamie.dlscorridor.core.transform.netty.NettyConf;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -58,6 +64,11 @@ public class ConsumerAutoConfigure {
     private LoadBalanceEnv balance = new LoadBalanceEnv();
     @NestedConfigurationProperty
     private FaultEnv fault = new FaultEnv();
+    @NestedConfigurationProperty
+    private NettyConf netty = new NettyConf();
+    @NestedConfigurationProperty
+    private HttpConf http = new HttpConf();
+    private String transform = "http";
     @Bean
     public Router router() {
         if (gray.getEnable()) {
@@ -93,14 +104,26 @@ public class ConsumerAutoConfigure {
         return filterChain;
     }
     @Bean
-    public RpcContext rpcContext(@Autowired Router router,@Autowired LoadBalancer loadBalancer,@Autowired FilterChain filterChain) {
+    @ConditionalOnBean(SerializationService.class)
+    public RpcTransform rpcTransform(@Autowired SerializationService serializationService) {
+        if ("http".equals(transform)) {
+            return new HttpRpcTransform(http);
+        } else if ("netty".equals(transform)) {
+            return new NettyRpcTransform(netty,serializationService);
+        } else {
+            return new HttpRpcTransform(http);
+        }
+    }
+    @Bean
+    public RpcContext rpcContext(@Autowired Router router,@Autowired LoadBalancer loadBalancer,@Autowired FilterChain filterChain,
+        @Autowired RpcTransform rpcTransform) {
         Map<String,String> parameters = new HashMap<>();
         parameters.put("app.retry", String.valueOf(fault.getRetry()));
         parameters.put("app.timeout", String.valueOf(fault.getTimeout()));
         parameters.put("app.faultLimit", String.valueOf(fault.getFaultLimit()));
         parameters.put("app.halfOpenDelay", String.valueOf(fault.getHalfOpenDelay()));
         parameters.put("app.halfOpenInitialDelay", String.valueOf(fault.getHalfOpenInitialDelay()));
-        return RpcContext.builder().router(router).loadBalancer(loadBalancer).filterChain(filterChain).transform(new HttpRpcTransform()).parameters(parameters).build();
+        return RpcContext.builder().router(router).loadBalancer(loadBalancer).filterChain(filterChain).transform(rpcTransform).parameters(parameters).build();
     }
     @Bean
     @Order(Integer.MIN_VALUE)

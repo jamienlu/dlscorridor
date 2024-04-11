@@ -50,8 +50,8 @@ public class StubInvokerHandler implements RpcInvokeHandler {
 
     @Override
     public RpcResponse doInvoke(RpcRequest rpcRequest) {
-        RpcResponse rpcResponse = RpcResponse.builder().build();;
-        InstanceMeta instanceMeta = null;
+        RpcResponse rpcResponse = RpcResponse.builder().build();
+        InstanceMeta instanceMeta;
         int retry = handlerParam.getRetry();
         while (retry-- > 0) {
             log.debug("retry rpc handler can invoke count:" + retry);
@@ -71,7 +71,7 @@ public class StubInvokerHandler implements RpcInvokeHandler {
             try {
                 // 2.rpc实例调用
                 log.info("real invoke url:" + instanceMeta.toAddress());
-                rpcResponse = rpcContext.getTransform().transform(rpcRequest, instanceMeta.toAddress());
+                rpcResponse = rpcContext.getTransform().transform(rpcRequest, instanceMeta);
             } catch (Exception e) {
                 rpcResponse.setEx(new RpcException(e.getCause(), RpcException.UNKNOWN_EX));
             }

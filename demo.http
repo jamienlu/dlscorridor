@@ -11,7 +11,7 @@ GET http://localhost:8801/pay?userId=123&orderId=456
 
 
 ### 获取provider用户信息
-POST http://localhost:8080/rpc/services
+POST http://192.168.0.100:8081/rpc/services
 Content-Type: application/json
 
 {

@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +57,7 @@ public class ProviderBootstrap implements ApplicationContextAware {
         serviceMetas.forEach(meta -> registryCenter.register(meta,instanceMeta));
         log.info("spring load ProviderBootstrap end");
     }
+
     private void loadProvider(ServiceMeta serviceMeta) {
         List<ServiceMeta> skeltonRegs = new ArrayList<>();
         Map<String, Map<String, ProviderMeta>> skeltonInvokers = new HashMap<>();

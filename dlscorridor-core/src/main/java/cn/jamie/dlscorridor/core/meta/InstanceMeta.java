@@ -1,7 +1,6 @@
 package cn.jamie.dlscorridor.core.meta;
 
 import com.alibaba.fastjson2.JSON;
-import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -55,7 +54,10 @@ public class InstanceMeta {
     public void addMeta(String key, String value) {
         parameters.put(key,value);
     }
-    public String toMetas() {
-        return JSON.toJSONString(this.getParameters());
+    public String searchMeta(String key) {
+        return parameters.get(key);
+    }
+    public byte[] toMetas() {
+        return JSON.toJSONString(this.getParameters()).getBytes();
     }
 }

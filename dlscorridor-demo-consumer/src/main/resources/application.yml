@@ -15,6 +15,12 @@ discorridor:
       url: 192.168.0.101:8848,192.168.0.101:8849,192.168.0.101:8850
       over-time: 1000
       retry-count: 3
+#    env:
+#      type: zk
+#      namespace: public
+#      url: 192.168.0.101:2181
+#      over-time: 1000
+#      retry-count: 3
   consumer:
     enable: true
     filters:
@@ -30,6 +36,8 @@ discorridor:
     gray:
       enable: true
       ratio: 50
+#    transform: http
+    transform: netty
 logging:
   level:
     root: info

@@ -107,12 +107,12 @@ public class ZkRegistryCenter implements RegistryCenter {
             }
             String serviceNode = groupNode + "/" + service.getName();
             if (client.checkExists().forPath(serviceNode) == null) {
-                client.create().withMode(CreateMode.PERSISTENT).forPath(serviceNode,JSON.toJSONBytes(service.getParameters()));
+                client.create().withMode(CreateMode.PERSISTENT).forPath(serviceNode, instance.toMetas());
             }
             // 根据服务信息修改实例信息
             instance.addMeta(MetaConstant.VERSION,service.getVersion());
             String instancePath = serviceNode + "/" + instance.toPath();
-            client.create().withMode(CreateMode.EPHEMERAL).forPath(instancePath, JSON.toJSONBytes(instance.getParameters()));
+            client.create().withMode(CreateMode.EPHEMERAL).forPath(instancePath, instance.toMetas());
             log.info("create zk registry instance path:" + instancePath);
         } catch (Exception e) {
             throw new RpcException(e.getCause(),e.getMessage());
@@ -180,9 +180,7 @@ public class ZkRegistryCenter implements RegistryCenter {
                     throw new RpcException(e.getCause(), e.getMessage());
                 }
                 Map<String,Object> params = JSON.parseObject(new String(bytes));
-                params.forEach((k,v) -> {
-                    instanceMeta.getParameters().put(k,v == null ? null : v.toString());
-                });
+                params.forEach((k,v) -> instanceMeta.getParameters().put(k,v == null ? null : v.toString()));
                 return instanceMeta;
             }).collect(Collectors.toList());
             log.debug("fetch zk serverNode path:" + serverNode + "##size:" + result.size());

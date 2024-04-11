@@ -4,6 +4,8 @@ import cn.jamie.discorridor.spring.boot.autoconfigure.ProviderAutoConfigure;
 import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.api.RpcResponse;
 import cn.jamie.dlscorridor.core.provider.ProviderInvoker;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -22,7 +24,8 @@ import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfig
 @ConditionalOnProperty(prefix = PROVIDER_PREFIX, name = "enable")
 @AutoConfigureAfter(ProviderAutoConfigure.class)
 @RestController
-public class ProviderController {
+@Slf4j
+public class ProviderHttpServer {
     @Autowired
     private ProviderInvoker providerInvoker;
     @PostMapping("/rpc/services")
