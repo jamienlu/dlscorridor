@@ -6,6 +6,7 @@ import cn.jamie.dlscorridor.core.annotation.JMProvider;
 import cn.jamie.dlscorridor.core.annotation.RpcService;
 import cn.jamie.dlscorridor.core.api.RpcContext;
 import cn.jamie.dlscorridor.core.exception.RpcException;
+import com.alibaba.nacos.shaded.com.google.common.collect.Lists;
 
 import java.util.List;
 import java.util.Set;
@@ -25,7 +26,7 @@ public class UserServiceImpl implements  @RpcService UserService {
 
     @Override
     public List<User> search(User user) {
-        return List.of(user);
+        return Lists.newArrayList(user);
     }
 
     @Override

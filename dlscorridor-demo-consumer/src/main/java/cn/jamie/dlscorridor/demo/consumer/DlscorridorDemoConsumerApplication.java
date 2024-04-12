@@ -7,6 +7,7 @@ import cn.jamie.discorridor.demo.api.User;
 import cn.jamie.discorridor.demo.api.UserService;
 import cn.jamie.dlscorridor.core.annotation.JMConsumer;
 import cn.jamie.dlscorridor.core.api.RpcContext;
+import com.alibaba.nacos.shaded.com.google.common.collect.Lists;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -60,7 +61,7 @@ public class DlscorridorDemoConsumerApplication {
 			System.out.println(order);
 			List<Order> tt = orderService.findByIds(new int[]{1,2});
 			System.out.println(tt);
-			List<Order> orders = orderService.findByIds(List.of(1,2));
+			List<Order> orders = orderService.findByIds(Lists.newArrayList(1,2));
 			System.out.println(orders);
 			System.out.println(orderService.findByIds(new Integer[]{1,2}));;
 			/*System.out.println(orderService.findById(404));*/

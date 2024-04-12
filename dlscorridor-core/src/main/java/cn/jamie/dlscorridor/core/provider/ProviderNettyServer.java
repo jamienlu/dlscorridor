@@ -1,11 +1,13 @@
 package cn.jamie.dlscorridor.core.provider;
 
+import cn.jamie.dlscorridor.core.api.RpcRequest;
+import cn.jamie.dlscorridor.core.api.RpcResponse;
 import cn.jamie.dlscorridor.core.exception.RpcException;
 import cn.jamie.dlscorridor.core.serialization.SerializationService;
 import cn.jamie.dlscorridor.core.transform.netty.ProviderChannelHandler;
+import cn.jamie.dlscorridor.core.transform.netty.RpcDecoder;
+import cn.jamie.dlscorridor.core.transform.netty.RpcEncoder;
 import cn.jamie.dlscorridor.core.transform.netty.RpcNettyFactory;
-import cn.jamie.dlscorridor.core.transform.netty.RpcRequestDecoder;
-import cn.jamie.dlscorridor.core.transform.netty.RpcResponseEncoder;
 import cn.jamie.dlscorridor.core.transform.netty.NettyConf;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -64,8 +66,8 @@ public class ProviderNettyServer {
                         @Override
                         protected void initChannel(SocketChannel ch) {
                             ch.pipeline()
-                                    .addLast("decoder", new RpcRequestDecoder(serializationService))
-                                    .addLast("encoder", new RpcResponseEncoder(serializationService))
+                                    .addLast("decoder", new RpcEncoder(serializationService))
+                                    .addLast("encoder", new RpcDecoder(RpcRequest.class, serializationService))
                                     .addLast("server-idle-handler", new IdleStateHandler(nettyConf.getReadIdleTime(), nettyConf.getWriteIdleTime(), nettyConf.getCloseIdleTime(), TimeUnit.MILLISECONDS))
                                     .addLast("handler", new ProviderChannelHandler(providerInvoker));
                         }

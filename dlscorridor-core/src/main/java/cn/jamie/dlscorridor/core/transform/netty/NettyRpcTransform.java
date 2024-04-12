@@ -56,8 +56,8 @@ public class NettyRpcTransform implements RpcTransform {
                         @Override
                         protected void initChannel(SocketChannel ch) {
                             ch.pipeline()
-                                    .addLast("decoder", new RpcResponseDecoder(serializationService))
-                                    .addLast("encoder", new RpcRequestEncoder(serializationService))
+                                    .addLast("decoder", new RpcDecoder(RpcResponse.class, serializationService))
+                                    .addLast("encoder", new RpcEncoder(serializationService))
                                     .addLast("server-idle-handler", new IdleStateHandler(nettyConf.getReadIdleTime(), nettyConf.getWriteIdleTime(), nettyConf.getCloseIdleTime(), TimeUnit.MILLISECONDS))
                                     .addLast("handler",consumerChannelHandler);
                         }

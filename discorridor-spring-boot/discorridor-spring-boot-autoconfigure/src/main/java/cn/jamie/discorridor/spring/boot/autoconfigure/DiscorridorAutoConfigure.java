@@ -3,6 +3,7 @@ package cn.jamie.discorridor.spring.boot.autoconfigure;
 import cn.jamie.discorridor.spring.boot.autoconfigure.bean.AppEnv;
 import cn.jamie.dlscorridor.core.meta.ServiceMeta;
 import cn.jamie.dlscorridor.core.serialization.FastJson2Serializer;
+import cn.jamie.dlscorridor.core.serialization.ProtobufSerializer;
 import cn.jamie.dlscorridor.core.serialization.SerializationService;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -32,6 +33,8 @@ public class DiscorridorAutoConfigure {
     public SerializationService serializationService() {
         if ("fastjson2".equals(serialization)) {
             return new FastJson2Serializer();
+        } else if ("protobuf".equals(serialization)) {
+            return new ProtobufSerializer();
         }
         return new FastJson2Serializer();
     }

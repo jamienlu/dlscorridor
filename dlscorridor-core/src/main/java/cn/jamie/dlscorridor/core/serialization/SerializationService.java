@@ -9,6 +9,6 @@ import java.io.IOException;
  * @create 2024-03-15
  */
 public interface SerializationService {
-    <T> byte[] serialize(T obj) throws IOException;
-    <T> T deserialize(byte[] data, Class<T> clazz) throws IOException;
+    <T> byte[] serialize(T obj);
+    <T> T deserialize(byte[] data, Class<T> clazz);
 }

@@ -8,12 +8,12 @@ import java.io.IOException;
  */
 public class KryoSerializer implements SerializationService {
     @Override
-    public <T> byte[] serialize(T obj) throws IOException {
+    public <T> byte[] serialize(T obj) {
         return new byte[0];
     }
 
     @Override
-    public <T> T deserialize(byte[] data, Class<T> clazz) throws IOException {
+    public <T> T deserialize(byte[] data, Class<T> clazz) {
         return null;
     }
 }
