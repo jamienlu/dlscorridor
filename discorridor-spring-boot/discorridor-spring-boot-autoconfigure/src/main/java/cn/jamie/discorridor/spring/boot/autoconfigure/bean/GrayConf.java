@@ -7,7 +7,7 @@ import lombok.Data;
  * @create 2024-04-04
  */
 @Data
-public class GrayEnv {
+public class GrayConf {
     private Boolean enable = false;
     private Integer ratio = 50;
 }

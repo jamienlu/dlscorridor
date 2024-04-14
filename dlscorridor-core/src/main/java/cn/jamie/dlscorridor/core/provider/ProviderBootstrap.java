@@ -9,6 +9,7 @@ import cn.jamie.dlscorridor.core.meta.ProviderMeta;
 import cn.jamie.dlscorridor.core.util.RpcMethodUtil;
 import cn.jamie.dlscorridor.core.util.RpcReflectUtil;
 import cn.jamie.dlscorridor.core.util.ScanPackageUtil;
+import com.alibaba.fastjson2.util.BeanUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 
@@ -41,9 +42,7 @@ public class ProviderBootstrap implements ApplicationContextAware {
         this.providerStorage = providerStorage;
     }
 
-    @SneakyThrows
-    @PostConstruct
-    public void initProviders() {
+    public void init() {
         log.info("spring init ProviderBootstrap");
         ServiceMeta serviceMeta = applicationContext.getBean(ServiceMeta.class);
         providerStorage = applicationContext.getBean(ProviderStorage.class);
@@ -66,7 +65,7 @@ public class ProviderBootstrap implements ApplicationContextAware {
             List<Class<?>> skeltonInterfaces = RpcReflectUtil.findAnnotationInterfaces(stubImpl, RpcService.class);
             skeltonInterfaces.forEach(skeltonInterface -> {
                 ServiceMeta skltonMeta = ServiceMeta.builder().env(serviceMeta.getEnv()).namespace(serviceMeta.getNamespace()).app(serviceMeta.getApp())
-                        .name(skeltonInterface.getCanonicalName()).group(serviceMeta.getGroup()).version(serviceMeta.getVersion()).build();
+                        .name(skeltonInterface.getCanonicalName()).group(serviceMeta.getGroup()).version(serviceMeta.getVersion()).parameters(serviceMeta.getParameters()).build();
                 skeltonRegs.add(skltonMeta);
                 skeltonInvokers.putIfAbsent(skeltonInterface.getCanonicalName(), new HashMap<>());
                 Arrays.stream(stubImpl.getDeclaredMethods())
@@ -90,8 +89,7 @@ public class ProviderBootstrap implements ApplicationContextAware {
         providerStorage.cleanUp();
         providerStorage.storage(skeltonRegs, skeltonInvokers);
     }
-    @PreDestroy
-    public void destroyRegistryCenter() {
+    public void destroy() {
         List<ServiceMeta> serviceMetas = providerStorage.findSkeltonRegs();
         InstanceMeta instanceMeta = applicationContext.getBean(InstanceMeta.class);
         RegistryCenter registryCenter = applicationContext.getBean(RegistryCenter.class);

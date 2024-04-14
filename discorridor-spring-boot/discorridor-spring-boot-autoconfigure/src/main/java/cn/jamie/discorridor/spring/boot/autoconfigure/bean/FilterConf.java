@@ -7,7 +7,7 @@ import lombok.Data;
  * @create 2024-04-04
  */
 @Data
-public class FilterEnv {
+public class FilterConf {
     private String type;
 
     private Integer tokenSize = 2000;

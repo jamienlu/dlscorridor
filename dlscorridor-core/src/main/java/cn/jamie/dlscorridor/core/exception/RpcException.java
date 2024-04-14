@@ -32,12 +32,10 @@ public class RpcException extends RuntimeException {
     public static final String NO_SUCH_METHOD_EX = "X002" + "-" + "method_not_exists";
     public static final String NO_USE_METAINSTANCE  = "X003" + "-" + "instance_not_userful";
     public static final String NO_TOKEN  = "X004" + "-" + "too fast! no token use";
-
     public static final String NO_NACOS_SERVER  = "X005" + "-" + "nacos_server_error";
     public static final String NO_NACOS_INSTANCE  = "X006" + "-" + "nacos_instance_error";
-
     public static final String HTTP_ERROR  = "X007" + "-" + "http_error";
-
     public static final String NETTY_ERROR  = "X008" + "-" + "netty_error";
+    public static final String SERVER_OVERLOAD  = "X009" + "-" + "provider over tpsLimit";
     public static final String UNKNOWN_EX = "Z001" + "-" + "unknown";
 }

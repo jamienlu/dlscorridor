@@ -8,6 +8,7 @@ import cn.jamie.discorridor.demo.api.UserService;
 import cn.jamie.dlscorridor.core.annotation.JMConsumer;
 import cn.jamie.dlscorridor.core.api.RpcContext;
 import com.alibaba.nacos.shaded.com.google.common.collect.Lists;
+import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,13 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @SpringBootApplication
+@EnableApolloConfig
 @RestController
 public class DlscorridorDemoConsumerApplication {
-	@JMConsumer(service = "discorridor-provider", version = "1.0.1")
+	@JMConsumer(service = "discorridor-provider", version = "1.0.0")
 	UserService userService;
-	@JMConsumer(service = "discorridor-provider", version = "1.0.1")
+	@JMConsumer(service = "discorridor-provider", version = "1.0.0")
 	OrderService orderService;
-	@JMConsumer(service = "discorridor-pay", version = "1.0.0")
+	@JMConsumer(service = "discorridor-pay", version = "1.0.1")
 	PayService payService;
 
 	public static void main(String[] args) {

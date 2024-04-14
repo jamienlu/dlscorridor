@@ -19,6 +19,7 @@ public class NacosServerInstanceUtil {
         service.setName(serviceMeta.getName());
         service.setGroupName(serviceMeta.getGroup());
         service.setMetadata(serviceMeta.getParameters());
+        // nacos 没有这个字段为了从nacos转成自己的对象预先插入
         service.getMetadata().put(MetaConstant.VERSION, serviceMeta.getVersion());
         return service;
     }
@@ -34,17 +35,12 @@ public class NacosServerInstanceUtil {
         Instance instance = new Instance();
         instance.setIp(instanceMeta.getHost());
         instance.setPort(instanceMeta.getPort());
-        instance.setMetadata(instanceMeta.getParameters());
         instance.setServiceName(serviceName);
+        instance.setMetadata(instanceMeta.getParameters());
         return instance;
     }
     public static InstanceMeta convertNacosInstance(Instance instance) {
         return InstanceMeta.builder().host(instance.getIp()).port(instance.getPort())
             .status(instance.isHealthy()).parameters(instance.getMetadata()).build();
-    }
-    public static Instance createClusterNacosInstance(String clusterName, String serviceName, InstanceMeta instanceMeta) {
-        Instance instance = createNacosInstance(serviceName, instanceMeta);
-        instance.setClusterName(clusterName);
-        return instance;
     }
 }

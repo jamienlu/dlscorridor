@@ -7,7 +7,7 @@ import lombok.Data;
  * @create 2024-04-04
  */
 @Data
-public class FaultEnv {
+public class FaultConf {
     private Integer timeout = 2000;
     private Integer retry = 3;
     private Integer faultLimit = 5;

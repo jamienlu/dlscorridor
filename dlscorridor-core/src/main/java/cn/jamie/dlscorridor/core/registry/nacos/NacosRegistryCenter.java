@@ -67,12 +67,13 @@ public class NacosRegistryCenter implements RegistryCenter {
         log.debug("nacos center register instance:" + JSON.toJSONString(instance));
         Service nacosServer = NacosServerInstanceUtil.createNacosServer(service);
         Instance nacosInstance = NacosServerInstanceUtil.createNacosInstance(nacosServer.getName(),instance);
-        // 根据服务信息修改实例信息
-        nacosInstance.addMetadata("version",service.getVersion());
-        if (service.getParameters().containsKey("gray")) {
-            nacosInstance.addMetadata("gray", "true");
-        }
+        // 服务元数据挂载到实例上
+        nacosInstance.getMetadata().putAll(service.getParameters());
+        String clusterName = nacosInstance.getMetadata().get("dc");
         try {
+            if (null != clusterName) {
+                nacosInstance.setClusterName(clusterName);
+            }
             namingService.registerInstance(nacosServer.getName(), nacosServer.getGroupName(), nacosInstance);
         } catch (NacosException e) {
             log.error("register nacos instance error", e);
@@ -88,7 +89,11 @@ public class NacosRegistryCenter implements RegistryCenter {
         log.debug("nacos center unregister instance:" + JSON.toJSONString(instance));
         Service nacosServer = NacosServerInstanceUtil.createNacosServer(service);
         Instance nacosInstance = NacosServerInstanceUtil.createNacosInstance(nacosServer.getName(),instance);
+        String clusterName = nacosInstance.getMetadata().get("dc");
         try {
+            if (null != clusterName) {
+                nacosInstance.setClusterName(clusterName);
+            }
             namingService.deregisterInstance(nacosServer.getName(), nacosServer.getGroupName(), nacosInstance);
         } catch (NacosException e) {
             log.error("unregister nacos instance error", e);

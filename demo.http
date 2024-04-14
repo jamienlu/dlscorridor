@@ -19,3 +19,6 @@ Content-Type: application/json
   "methodSign": "findById/long",
   "args": [100]
 }
+### test
+GET http://192.168.0.100:8081/conf
+

@@ -95,7 +95,7 @@ public class ZkRegistryCenter implements RegistryCenter {
             }
             String namspaceNode = appNode + "/" + service.getNamespace();
             if (client.checkExists().forPath(namspaceNode) == null) {
-                client.create().withMode(CreateMode.PERSISTENT).forPath(namspaceNode,"namspaceNode".getBytes());
+                client.create().withMode(CreateMode.PERSISTENT).forPath(namspaceNode,"namespaceNode".getBytes());
             }
             String envNode = namspaceNode + "/" + service.getEnv();
             if (client.checkExists().forPath(envNode) == null) {
@@ -107,10 +107,11 @@ public class ZkRegistryCenter implements RegistryCenter {
             }
             String serviceNode = groupNode + "/" + service.getName();
             if (client.checkExists().forPath(serviceNode) == null) {
-                client.create().withMode(CreateMode.PERSISTENT).forPath(serviceNode, instance.toMetas());
+                client.create().withMode(CreateMode.PERSISTENT).forPath(serviceNode, service.toMetas());
             }
             // 根据服务信息修改实例信息
-            instance.addMeta(MetaConstant.VERSION,service.getVersion());
+            instance.addMetas(service.getParameters());
+            instance.addMeta(MetaConstant.VERSION, service.getVersion());
             String instancePath = serviceNode + "/" + instance.toPath();
             client.create().withMode(CreateMode.EPHEMERAL).forPath(instancePath, instance.toMetas());
             log.info("create zk registry instance path:" + instancePath);
@@ -180,7 +181,11 @@ public class ZkRegistryCenter implements RegistryCenter {
                     throw new RpcException(e.getCause(), e.getMessage());
                 }
                 Map<String,Object> params = JSON.parseObject(new String(bytes));
-                params.forEach((k,v) -> instanceMeta.getParameters().put(k,v == null ? null : v.toString()));
+                params.forEach((k,v) -> {
+                    if (k !=null && v!=null) {
+                        instanceMeta.addMeta(k,v.toString());
+                    }
+                });
                 return instanceMeta;
             }).collect(Collectors.toList());
             log.debug("fetch zk serverNode path:" + serverNode + "##size:" + result.size());
@@ -188,13 +193,14 @@ public class ZkRegistryCenter implements RegistryCenter {
             log.error(e.getMessage(),e);
             throw new RpcException(e.getCause(),e.getMessage());
         }
+        log.debug("before filter zk serverNode path:" + serverNode + "##size:" + result.size());
         if (null != service.getVersion() && !service.getVersion().isEmpty()) {
             result = result.stream().filter(x -> {
                 String curVersion = x.getParameters().get(MetaConstant.VERSION);
                 return VersionUtil.compareVersion(curVersion, service.getVersion()) >= 0;
             }).collect(Collectors.toList());
         }
-        log.debug("real zk serverNode path:" + serverNode + "##size:" + result.size());
+        log.debug("need zk serverNode path:" + serverNode + "##size:" + result.size());
         return result;
     }
     @Override
@@ -205,7 +211,6 @@ public class ZkRegistryCenter implements RegistryCenter {
     @Override
     public void subscribe(ServiceMeta service) {
         log.debug("prepare subscribe stub:" + JSON.toJSONString(service));
-        // 初始拉一次订阅数据数据
         String serverNode = "/" + service.getApp() + "/" + service.getNamespace() + "/" + service.getEnv()
                 + "/" + service.getGroup() + "/" + service.getName();
         // 订阅zk节点

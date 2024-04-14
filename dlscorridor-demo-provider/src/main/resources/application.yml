@@ -1,37 +1,60 @@
 server:
   port: 8080
+
 discorridor:
-  env:
-    app: discorridor-provider
-    namespace: public
+  app: discorridor-provider
+  name: provider-v1
+  version: 1.0.0
+  meta:
     env: dev
-    name: provider-v1
-    version: 1.0.0
+    namespace: public
+    group: DEFAULT_GROUP
+    dc: cd
+    unit: A001
+    tc: 50
+    serialization: fastjson2
+    gray: false
+  netty:
+    enable: true
+    port: 8888
+    read-idle-time: 0
+    write-idle-time: 0
+    close-idle-time: 10000
+  http:
+    alive-time: 60000
+    max-idle-cons: 12
+    read-out-time: 1000
+    write-out-time: 1000
+    con-out-time: 5000
   registry:
-    env:
-      type: nacos
+    meta:
+      type: zk
       namespace: public
-      url: 192.168.0.101:8848,192.168.0.101:8849,192.168.0.101:8850
+      url: 192.168.0.101:2181
       over-time: 1000
       retry-count: 3
-#    env:
-#      type: zk
+#    meta:
+#      type: nacos
 #      namespace: public
-#      url: 192.168.0.101:2181
+#      url: 192.168.0.101:8848,192.168.0.101:8849,192.168.0.101:8850
 #      over-time: 1000
 #      retry-count: 3
   provider:
     enable: true
-    gray: false
-    port: 8080
-    netty:
-      port: 8888
-      read-idle-time: 0
-      write-idle-time: 0
-      close-idle-time:
-  transform:
-    netty:
-      enable: true
+
+app:
+  id: jamie
+apollo:
+  cacheDir: /temp/conf/data                   #配置本地配置缓存目录
+  cluster: default                           #指定使用哪个集群的配置
+  meta: http://kimmking.cn:8080           #DEV环境配置中心地址
+  autoUpdateInjectedSpringProperties: true   #是否开启 Spring 参数自动更新
+  bootstrap:
+    enabled: true                            #是否开启 Apollo
+    namespaces: application,provider.yml                     #设置 Namespace
+    eagerLoad:
+      enabled: false                         #将 Apollo 加载提到初始化日志系统之前
+
 logging:
   level:
     root: info

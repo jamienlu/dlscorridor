@@ -7,7 +7,7 @@ import lombok.Data;
  * @create 2024-03-28
  */
 @Data
-public class RegistryEnv {
+public class RegistryConf {
     private String type = "zk";
     private String namespace = "public";
     private String url = "192.168.0.102:2181";

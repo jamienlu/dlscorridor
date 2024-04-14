@@ -1,9 +1,9 @@
 package cn.jamie.discorridor.spring.boot.autoconfigure;
 
-import cn.jamie.discorridor.spring.boot.autoconfigure.bean.FaultEnv;
-import cn.jamie.discorridor.spring.boot.autoconfigure.bean.FilterEnv;
-import cn.jamie.discorridor.spring.boot.autoconfigure.bean.GrayEnv;
-import cn.jamie.discorridor.spring.boot.autoconfigure.bean.LoadBalanceEnv;
+import cn.jamie.discorridor.spring.boot.autoconfigure.bean.FaultConf;
+import cn.jamie.discorridor.spring.boot.autoconfigure.bean.FilterConf;
+import cn.jamie.discorridor.spring.boot.autoconfigure.bean.GrayConf;
+import cn.jamie.discorridor.spring.boot.autoconfigure.bean.LoadBalanceConf;
 import cn.jamie.dlscorridor.core.cluster.LoadBalancer;
 import cn.jamie.dlscorridor.core.cluster.Router;
 import cn.jamie.dlscorridor.core.api.RpcContext;
@@ -46,6 +46,13 @@ import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfig
 import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.FILTER_TOKEN;
 import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.LOADBALANCE_RANDOM;
 import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.LOADBALANCE_ROUND;
+import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.RPC_FAULT_LIMIT;
+import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.RPC_HALF_DELAY;
+import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.RPC_HALF_INIT_DELAY;
+import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.RPC_HTTP;
+import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.RPC_NETTY;
+import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.RPC_RETRY;
+import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.RPC_TIMEOUT;
 
 /**
  * @author jamieLu
@@ -57,18 +64,14 @@ import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfig
 @AutoConfigureAfter({DiscorridorAutoConfigure.class, RegistryConfiguration.class})
 @Data
 public class ConsumerAutoConfigure {
-    private List<FilterEnv> filters = new ArrayList<>();
+    private List<FilterConf> filters = new ArrayList<>();
     @NestedConfigurationProperty
-    private GrayEnv gray = new GrayEnv();
+    private GrayConf gray = new GrayConf();
     @NestedConfigurationProperty
-    private LoadBalanceEnv balance = new LoadBalanceEnv();
+    private LoadBalanceConf balance = new LoadBalanceConf();
     @NestedConfigurationProperty
-    private FaultEnv fault = new FaultEnv();
-    @NestedConfigurationProperty
-    private NettyConf netty = new NettyConf();
-    @NestedConfigurationProperty
-    private HttpConf http = new HttpConf();
-    private String transform = "http";
+    private FaultConf fault = new FaultConf();
+    private String transform = RPC_HTTP;
     @Bean
     public Router router() {
         if (gray.getEnable()) {
@@ -105,10 +108,10 @@ public class ConsumerAutoConfigure {
     }
     @Bean
     @ConditionalOnBean(SerializationService.class)
-    public RpcTransform rpcTransform(@Autowired SerializationService serializationService) {
-        if ("http".equals(transform)) {
+    public RpcTransform rpcTransform(@Autowired SerializationService serializationService, @Autowired NettyConf netty, @Autowired HttpConf http) {
+        if (RPC_HTTP.equals(transform)) {
             return new HttpRpcTransform(http);
-        } else if ("netty".equals(transform)) {
+        } else if (RPC_NETTY.equals(transform) && netty != null) {
             return new NettyRpcTransform(netty,serializationService);
         } else {
             return new HttpRpcTransform(http);
@@ -118,11 +121,11 @@ public class ConsumerAutoConfigure {
     public RpcContext rpcContext(@Autowired Router router,@Autowired LoadBalancer loadBalancer,@Autowired FilterChain filterChain,
         @Autowired RpcTransform rpcTransform) {
         Map<String,String> parameters = new HashMap<>();
-        parameters.put("app.retry", String.valueOf(fault.getRetry()));
-        parameters.put("app.timeout", String.valueOf(fault.getTimeout()));
-        parameters.put("app.faultLimit", String.valueOf(fault.getFaultLimit()));
-        parameters.put("app.halfOpenDelay", String.valueOf(fault.getHalfOpenDelay()));
-        parameters.put("app.halfOpenInitialDelay", String.valueOf(fault.getHalfOpenInitialDelay()));
+        parameters.put(RPC_RETRY, String.valueOf(fault.getRetry()));
+        parameters.put(RPC_TIMEOUT, String.valueOf(fault.getTimeout()));
+        parameters.put(RPC_FAULT_LIMIT, String.valueOf(fault.getFaultLimit()));
+        parameters.put(RPC_HALF_DELAY, String.valueOf(fault.getHalfOpenDelay()));
+        parameters.put(RPC_HALF_INIT_DELAY, String.valueOf(fault.getHalfOpenInitialDelay()));
         return RpcContext.builder().router(router).loadBalancer(loadBalancer).filterChain(filterChain).transform(rpcTransform).parameters(parameters).build();
     }
     @Bean

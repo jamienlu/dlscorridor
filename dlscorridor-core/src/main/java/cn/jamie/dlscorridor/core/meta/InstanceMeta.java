@@ -54,6 +54,9 @@ public class InstanceMeta {
     public void addMeta(String key, String value) {
         parameters.put(key,value);
     }
+    public void addMetas(Map<String,String> metas) {
+        parameters.putAll(metas);
+    }
     public String searchMeta(String key) {
         return parameters.get(key);
     }

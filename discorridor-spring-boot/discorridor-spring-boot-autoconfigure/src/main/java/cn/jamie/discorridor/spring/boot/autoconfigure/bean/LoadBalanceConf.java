@@ -9,6 +9,6 @@ import static cn.jamie.discorridor.spring.boot.autoconfigure.constant.AutoConfig
  * @create 2024-04-04
  */
 @Data
-public class LoadBalanceEnv {
+public class LoadBalanceConf {
     private String type = LOADBALANCE_RANDOM;
 }

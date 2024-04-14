@@ -34,8 +34,15 @@ public class ServiceMeta {
         return String.format("%s_%s_%s_%s_%s",app,namespace,env,group,name);
     }
 
-    public String toMetas() {
-        return JSON.toJSONString(this.getParameters());
+    public void addMeta(String key, String value) {
+        parameters.put(key,value);
+    }
+    public String searchMeta(String key) {
+        return parameters.get(key);
+    }
+
+    public byte[] toMetas() {
+        return JSON.toJSONString(this.getParameters()).getBytes();
     }
 
 }

@@ -6,12 +6,18 @@ import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.api.RpcResponse;
 import cn.jamie.dlscorridor.core.exception.RpcException;
 import cn.jamie.dlscorridor.core.meta.ProviderMeta;
+import cn.jamie.dlscorridor.core.meta.ServiceMeta;
+import cn.jamie.dlscorridor.core.util.SlidingTimeWindow;
 import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * @author jamieLu
@@ -20,9 +26,13 @@ import java.util.Arrays;
 @Slf4j
 public class ProviderInvoker implements RpcInvokeHandler {
     private final ProviderStorage providerStorage;
+    private final ServiceMeta serverMeta;
 
-    public ProviderInvoker(ProviderStorage providerStorage) {
+    final Map<String, SlidingTimeWindow> windows = new ConcurrentHashMap<>();
+
+    public ProviderInvoker(ProviderStorage providerStorage, ServiceMeta serverMeta) {
         this.providerStorage = providerStorage;
+        this.serverMeta = serverMeta;
     }
 
     /**
@@ -42,6 +52,13 @@ public class ProviderInvoker implements RpcInvokeHandler {
         }
         ProviderMeta providerMeta = providerStorage.findProviderMeta(rpcRequest.getService(),rpcRequest.getMethodSign());
         if (providerMeta != null) {
+            SlidingTimeWindow window = windows.computeIfAbsent(rpcRequest.getService(), k -> new SlidingTimeWindow());
+            if (window.calcSum() >= Integer.parseInt(serverMeta.searchMeta("tc"))) {
+                throw new RpcException(RpcException.SERVER_OVERLOAD);
+            } else {
+                window.record(System.currentTimeMillis());
+                log.debug("service {} in window with {}", rpcRequest.getService(), window.getSum());
+            }
             Object data = null;
             Method method = providerMeta.getMethod();
             // json 序列化还原  数组和集合类型数据处理
