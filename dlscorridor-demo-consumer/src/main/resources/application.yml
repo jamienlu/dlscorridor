@@ -58,11 +58,11 @@ discorridor:
     transform: netty
 
 app:
-  id: jamie
+  id: discorridor
 apollo:
   cacheDir: /temp/conf/data                   #配置本地配置缓存目录
   cluster: default                           #指定使用哪个集群的配置
-  meta: http://kimmking.cn:8080           #DEV环境配置中心地址
+  meta: http://192.168.0.101:8080          #DEV环境配置中心地址
   autoUpdateInjectedSpringProperties: true   #是否开启 Spring 参数自动更新
   bootstrap:
     enabled: true                            #是否开启 Apollo

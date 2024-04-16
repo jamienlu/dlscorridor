@@ -2,6 +2,7 @@ package cn.jamie.discorridor.spring.boot.autoconfigure;
 
 import cn.jamie.discorridor.spring.boot.autoconfigure.bean.AppConf;
 import cn.jamie.discorridor.spring.boot.autoconfigure.process.ApolloConfigChanged;
+import cn.jamie.dlscorridor.core.constant.MetaConstant;
 import cn.jamie.dlscorridor.core.meta.ServiceMeta;
 import cn.jamie.dlscorridor.core.serialization.FastJson2Serializer;
 import cn.jamie.dlscorridor.core.serialization.ProtobufSerializer;
@@ -63,9 +64,9 @@ public class DiscorridorAutoConfigure {
     }
     @Bean
     public SerializationService serializationService() {
-        if ("fastjson2".equals(meta.getSerialization())) {
+        if (MetaConstant.SERIALIZATION_FASTJSON2.equals(meta.getSerialization())) {
             return new FastJson2Serializer();
-        } else if ("protobuf".equals(meta.getSerialization())) {
+        } else if (MetaConstant.SERIALIZATION_PROTOBUF.equals(meta.getSerialization())) {
             return new ProtobufSerializer();
         }
         return new FastJson2Serializer();

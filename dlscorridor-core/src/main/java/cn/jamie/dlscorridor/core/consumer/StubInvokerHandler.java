@@ -70,8 +70,9 @@ public class StubInvokerHandler implements RpcInvokeHandler {
             }
             try {
                 // 2.rpc实例调用
-                log.info("real invoke url:" + instanceMeta.toAddress());
+                log.info("start real invoke url:" + instanceMeta.toAddress());
                 rpcResponse = rpcContext.getTransform().transform(rpcRequest, instanceMeta);
+                log.info("end real invoke url:" + instanceMeta.toAddress());
             } catch (Exception e) {
                 rpcResponse.setEx(new RpcException(e.getCause(), RpcException.UNKNOWN_EX));
             }

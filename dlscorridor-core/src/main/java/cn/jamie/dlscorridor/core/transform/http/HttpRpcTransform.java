@@ -2,8 +2,10 @@ package cn.jamie.dlscorridor.core.transform.http;
 
 import cn.jamie.dlscorridor.core.api.RpcRequest;
 import cn.jamie.dlscorridor.core.api.RpcResponse;
+import cn.jamie.dlscorridor.core.constant.MetaConstant;
 import cn.jamie.dlscorridor.core.exception.RpcException;
 import cn.jamie.dlscorridor.core.meta.InstanceMeta;
+import cn.jamie.dlscorridor.core.serialization.SerializationService;
 import cn.jamie.dlscorridor.core.transform.RpcTransform;
 import cn.jamie.dlscorridor.core.util.HttpUtil;
 import com.alibaba.fastjson2.JSON;
@@ -13,8 +15,11 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -24,23 +29,29 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class HttpRpcTransform implements RpcTransform {
-    private final static MediaType JSON_TYPE = MediaType.get("application/json; charset=utf-8");
+    private MediaType mediaType;
     private final OkHttpClient okHttpClient;
+    private final SerializationService serializationService;
 
-    public HttpRpcTransform(HttpConf httpConf) {
+    public HttpRpcTransform(HttpConf httpConf, SerializationService serializationService) {
+
         okHttpClient = new OkHttpClient.Builder().connectionPool(new ConnectionPool(httpConf.getMaxIdleCons(), httpConf.getAliveTime(), TimeUnit.MILLISECONDS))
             .readTimeout(httpConf.getReadOutTime(), TimeUnit.MILLISECONDS)
             .writeTimeout(httpConf.getWriteOutTime(), TimeUnit.MILLISECONDS)
             .connectTimeout(httpConf.getConOutTime(), TimeUnit.MILLISECONDS)
             .build();
+        this.serializationService = serializationService;
+        mediaType = switch (serializationService.getClass().getSimpleName()) {
+            case "FastJson2Serializer" ->  MediaType.get("application/json; charset=utf-8");
+            case "ProtobufSerializer" -> MediaType.get("application/x-protobuf; charset=utf-8");
+            default ->  MediaType.get("application/json; charset=utf-8");
+        };
     }
 
     @Override
     public RpcResponse transform(RpcRequest rpcRequest, InstanceMeta instanceMeta) {
-        String res;
         try {
-            res = postOkHttp(HttpUtil.convertIpAddressToHttp(instanceMeta.toAddress()), JSON.toJSONString(rpcRequest));
-            return JSON.parseObject(res, RpcResponse.class);
+            return postOkHttp(HttpUtil.convertIpAddressToHttp(instanceMeta.toAddress()), rpcRequest);
         } catch (IOException e) {
             log.error("postOkHttp error", e);
             throw new RpcException(e, RpcException.HTTP_ERROR);
@@ -49,12 +60,12 @@ public class HttpRpcTransform implements RpcTransform {
 
 
 
-    public String postOkHttp(String url, String body) throws IOException {
+    public RpcResponse postOkHttp(String url, RpcRequest rpcRequest) throws IOException {
         Request request = new Request.Builder()
                 .url(url)
-                .post(RequestBody.create(body, JSON_TYPE))
+                .post(RequestBody.create(serializationService.serialize(rpcRequest), mediaType))
                 .build();
-        return Objects.requireNonNull(okHttpClient.newCall(request).execute().body()).string();
-
+        ResponseBody response = okHttpClient.newCall(request).execute().body();
+        return serializationService.deserialize(response.bytes(), RpcResponse.class);
     }
 }

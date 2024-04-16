@@ -10,6 +10,7 @@ import cn.jamie.dlscorridor.core.api.RpcContext;
 import cn.jamie.dlscorridor.core.cluster.GrayRouter;
 import cn.jamie.dlscorridor.core.cluster.RandomLoadBalance;
 import cn.jamie.dlscorridor.core.cluster.RoundLoadBalance;
+import cn.jamie.dlscorridor.core.constant.MetaConstant;
 import cn.jamie.dlscorridor.core.consumer.ConsumerBootstrap;
 import cn.jamie.dlscorridor.core.filter.CacheFilter;
 import cn.jamie.dlscorridor.core.filter.FilterChain;
@@ -110,11 +111,11 @@ public class ConsumerAutoConfigure {
     @ConditionalOnBean(SerializationService.class)
     public RpcTransform rpcTransform(@Autowired SerializationService serializationService, @Autowired NettyConf netty, @Autowired HttpConf http) {
         if (RPC_HTTP.equals(transform)) {
-            return new HttpRpcTransform(http);
+            return new HttpRpcTransform(http, serializationService);
         } else if (RPC_NETTY.equals(transform) && netty != null) {
-            return new NettyRpcTransform(netty,serializationService);
+            return new NettyRpcTransform(netty, serializationService);
         } else {
-            return new HttpRpcTransform(http);
+            return new HttpRpcTransform(http, serializationService);
         }
     }
     @Bean
