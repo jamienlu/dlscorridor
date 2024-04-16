@@ -43,7 +43,7 @@ public class CustomerProxy implements InvocationHandler {
         RpcResponse rpcResponse = RpcResponse.builder().status(false).data(null).build();
         rpcContext.getFilterChain().doFilter(rpcRequest, rpcResponse, rpcHandler);
         if (rpcResponse.isStatus()) {
-            return TypeUtil.castMethodResult(method, rpcResponse.getData());
+            return rpcResponse.getData() /*TypeUtil.castMethodResult(method, rpcResponse.getData())*/;
         } else {
             throw rpcResponse.getEx();
         }
