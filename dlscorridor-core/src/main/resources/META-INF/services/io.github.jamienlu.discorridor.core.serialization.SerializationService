@@ -1,0 +1,2 @@
+io.github.jamienlu.discorridor.core.serialization.FastJson2Serializer
+io.github.jamienlu.discorridor.core.serialization.KryoSerializer

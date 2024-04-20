@@ -3,8 +3,8 @@ package com.example.discorridor.demo.mix;
 import cn.jamie.discorridor.demo.api.Order;
 import cn.jamie.discorridor.demo.api.PayService;
 import cn.jamie.discorridor.demo.api.User;
-import cn.jamie.dlscorridor.core.annotation.JMProvider;
-import cn.jamie.dlscorridor.core.annotation.RpcService;
+import io.github.jamienlu.discorridor.core.annotation.JMProvider;
+import io.github.jamienlu.discorridor.core.annotation.RpcService;
 import lombok.extern.slf4j.Slf4j;
 
 /**

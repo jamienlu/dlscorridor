@@ -1,0 +1,35 @@
+package io.github.jamienlu.discorridor.spring.boot.autoconfigure.process;
+
+import io.github.jamienlu.discorridor.spring.boot.autoconfigure.ProviderAutoConfigure;
+import io.github.jamienlu.discorridor.core.api.RpcRequest;
+import io.github.jamienlu.discorridor.core.api.RpcResponse;
+import io.github.jamienlu.discorridor.core.provider.ProviderInvoker;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import static io.github.jamienlu.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst.PROVIDER_PREFIX;
+
+/**
+ * @author jamieLu
+ * @create 2024-04-02
+ */
+@Configuration
+@ConditionalOnProperty(prefix = PROVIDER_PREFIX, name = "enable")
+@AutoConfigureAfter(ProviderAutoConfigure.class)
+@RestController
+@Slf4j
+public class ProviderHttpServer {
+    @Autowired
+    private ProviderInvoker providerInvoker;
+    @PostMapping("/rpc/services")
+    public RpcResponse invoke (@RequestBody RpcRequest rpcRequest) {
+        return providerInvoker.doInvoke(rpcRequest);
+    }
+}

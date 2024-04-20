@@ -1,10 +1,8 @@
 package cn.jamie.dlscorridor.demo.provider;
 
-import cn.jamie.discorridor.spring.boot.autoconfigure.DiscorridorAutoConfigure;
-import cn.jamie.discorridor.spring.boot.autoconfigure.ProviderAutoConfigure;
-import cn.jamie.discorridor.spring.boot.autoconfigure.process.ProviderHttpServer;
-import cn.jamie.dlscorridor.core.meta.ServiceMeta;
-import cn.jamie.dlscorridor.core.registry.RegistryCenter;
+import io.github.jamienlu.discorridor.spring.boot.autoconfigure.DiscorridorAutoConfigure;
+import io.github.jamienlu.discorridor.spring.boot.autoconfigure.process.ProviderHttpServer;
+import io.github.jamienlu.discorridor.core.meta.ServiceMeta;
 import com.alibaba.fastjson2.JSON;
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 import org.springframework.beans.factory.annotation.Autowired;

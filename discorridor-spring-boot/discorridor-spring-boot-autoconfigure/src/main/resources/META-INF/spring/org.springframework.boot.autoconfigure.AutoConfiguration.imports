@@ -1,6 +1,6 @@
-cn.jamie.discorridor.spring.boot.autoconfigure.DiscorridorAutoConfigure
-cn.jamie.discorridor.spring.boot.autoconfigure.RegistryConfiguration
-cn.jamie.discorridor.spring.boot.autoconfigure.ProviderAutoConfigure
-cn.jamie.discorridor.spring.boot.autoconfigure.ConsumerAutoConfigure
-cn.jamie.discorridor.spring.boot.autoconfigure.WebConfig
-cn.jamie.discorridor.spring.boot.autoconfigure.process.ProviderHttpServer
+io.github.jamienlu.discorridor.spring.boot.autoconfigure.DiscorridorAutoConfigure
+io.github.jamienlu.discorridor.spring.boot.autoconfigure.RegistryConfiguration
+io.github.jamienlu.discorridor.spring.boot.autoconfigure.ProviderAutoConfigure
+io.github.jamienlu.discorridor.spring.boot.autoconfigure.ConsumerAutoConfigure
+io.github.jamienlu.discorridor.spring.boot.autoconfigure.WebConfig
+io.github.jamienlu.discorridor.spring.boot.autoconfigure.process.ProviderHttpServer

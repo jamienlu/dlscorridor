@@ -2,10 +2,9 @@ package cn.jamie.dlscorridor.demo.provider;
 
 import cn.jamie.discorridor.demo.api.Order;
 import cn.jamie.discorridor.demo.api.OrderService;
-import cn.jamie.dlscorridor.core.annotation.JMProvider;
-import cn.jamie.dlscorridor.core.annotation.RpcService;
+import io.github.jamienlu.discorridor.core.annotation.JMProvider;
+import io.github.jamienlu.discorridor.core.annotation.RpcService;
 import com.alibaba.nacos.shaded.com.google.common.collect.Lists;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.List;

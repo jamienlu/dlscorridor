@@ -2,10 +2,10 @@ package cn.jamie.dlscorridor.demo.provider;
 
 import cn.jamie.discorridor.demo.api.User;
 import cn.jamie.discorridor.demo.api.UserService;
-import cn.jamie.dlscorridor.core.annotation.JMProvider;
-import cn.jamie.dlscorridor.core.annotation.RpcService;
-import cn.jamie.dlscorridor.core.api.RpcContext;
-import cn.jamie.dlscorridor.core.exception.RpcException;
+import io.github.jamienlu.discorridor.core.annotation.JMProvider;
+import io.github.jamienlu.discorridor.core.annotation.RpcService;
+import io.github.jamienlu.discorridor.core.api.RpcContext;
+import io.github.jamienlu.discorridor.core.exception.RpcException;
 import com.alibaba.nacos.shaded.com.google.common.collect.Lists;
 
 import java.util.List;
