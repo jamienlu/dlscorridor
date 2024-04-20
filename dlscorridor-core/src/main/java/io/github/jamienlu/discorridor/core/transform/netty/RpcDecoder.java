@@ -1,6 +1,6 @@
 package io.github.jamienlu.discorridor.core.transform.netty;
 
-import io.github.jamienlu.discorridor.core.serialization.SerializationService;
+import io.github.jamienlu.discorridor.serialization.api.SerializationService;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;

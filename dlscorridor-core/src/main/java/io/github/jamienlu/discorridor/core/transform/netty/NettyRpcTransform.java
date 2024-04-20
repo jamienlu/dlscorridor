@@ -4,7 +4,7 @@ import io.github.jamienlu.discorridor.core.api.RpcRequest;
 import io.github.jamienlu.discorridor.core.api.RpcResponse;
 import io.github.jamienlu.discorridor.core.exception.RpcException;
 import io.github.jamienlu.discorridor.core.meta.InstanceMeta;
-import io.github.jamienlu.discorridor.core.serialization.SerializationService;
+import io.github.jamienlu.discorridor.serialization.api.SerializationService;
 import io.github.jamienlu.discorridor.core.transform.RpcTransform;
 import com.alibaba.fastjson2.JSON;
 import io.netty.bootstrap.Bootstrap;

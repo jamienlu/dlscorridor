@@ -1,6 +1,5 @@
-package io.github.jamienlu.discorridor.core.serialization;
+package io.github.jamienlu.discorridor.serialization.api;
 
-import java.io.IOException;
 
 /**
  * 序列化接口

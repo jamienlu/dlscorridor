@@ -2,7 +2,7 @@ package io.github.jamienlu.discorridor.core.provider;
 
 import io.github.jamienlu.discorridor.core.api.RpcRequest;
 import io.github.jamienlu.discorridor.core.exception.RpcException;
-import io.github.jamienlu.discorridor.core.serialization.SerializationService;
+import io.github.jamienlu.discorridor.serialization.api.SerializationService;
 import io.github.jamienlu.discorridor.core.transform.netty.ProviderChannelHandler;
 import io.github.jamienlu.discorridor.core.transform.netty.RpcDecoder;
 import io.github.jamienlu.discorridor.core.transform.netty.RpcEncoder;

@@ -17,7 +17,7 @@ import io.github.jamienlu.discorridor.core.filter.RpcContextFilter;
 import io.github.jamienlu.discorridor.core.filter.RpcFilterChain;
 import io.github.jamienlu.discorridor.core.filter.TokenFilter;
 
-import io.github.jamienlu.discorridor.core.serialization.SerializationService;
+import io.github.jamienlu.discorridor.serialization.api.SerializationService;
 import io.github.jamienlu.discorridor.core.transform.http.HttpRpcTransform;
 import io.github.jamienlu.discorridor.core.transform.netty.NettyRpcTransform;
 import io.github.jamienlu.discorridor.core.transform.RpcTransform;

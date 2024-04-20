@@ -1,4 +1,4 @@
-package io.github.jamienlu.discorridor.core.serialization;
+package io.github.jamienlu.discorridor.serialization.service;
 
 import lombok.Data;
 /**

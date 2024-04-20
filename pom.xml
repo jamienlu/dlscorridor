@@ -51,6 +51,7 @@
         <module>dlscorridor-demo-consumer</module>
         <module>discorridor-demo-mix</module>
         <module>discorridor-spring-boot</module>
+        <module>dlscorridor-serialization</module>
     </modules>
 
     <build>

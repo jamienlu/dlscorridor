@@ -1,8 +1,9 @@
-package io.github.jamienlu.discorridor.core.serialization;
+package io.github.jamienlu.discorridor.serialization.service;
 
 import com.alibaba.fastjson2.JSONB;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.JSONWriter;
+import io.github.jamienlu.discorridor.serialization.api.SerializationService;
 
 /**
  * @author jamieLu

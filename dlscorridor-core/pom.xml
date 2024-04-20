@@ -90,6 +90,11 @@
             <artifactId>spring-boot-starter</artifactId>
             <version>${spring.boot.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.jamienlu</groupId>
+            <artifactId>dlscorridor-serialization</artifactId>
+            <version>${rpc.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

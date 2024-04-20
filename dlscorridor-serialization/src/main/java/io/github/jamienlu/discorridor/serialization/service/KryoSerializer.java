@@ -1,4 +1,6 @@
-package io.github.jamienlu.discorridor.core.serialization;
+package io.github.jamienlu.discorridor.serialization.service;
+
+import io.github.jamienlu.discorridor.serialization.api.SerializationService;
 
 /**
  * @author jamieLu

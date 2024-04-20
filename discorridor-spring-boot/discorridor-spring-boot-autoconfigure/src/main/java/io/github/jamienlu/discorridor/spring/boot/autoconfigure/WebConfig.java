@@ -1,7 +1,7 @@
 package io.github.jamienlu.discorridor.spring.boot.autoconfigure;
 
 import io.github.jamienlu.discorridor.spring.boot.autoconfigure.process.HttpMessageConvert;
-import io.github.jamienlu.discorridor.core.serialization.SerializationService;
+import io.github.jamienlu.discorridor.serialization.api.SerializationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;

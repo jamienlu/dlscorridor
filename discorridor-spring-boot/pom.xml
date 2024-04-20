@@ -34,6 +34,11 @@
             <artifactId>dlscorridor-core</artifactId>
             <version>${rpc.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.jamienlu</groupId>
+            <artifactId>dlscorridor-serialization</artifactId>
+            <version>${rpc.version}</version>
+        </dependency>
     </dependencies>
 
 </project>
