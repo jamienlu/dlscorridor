@@ -1,8 +1,8 @@
 package cn.jamie.dlscorridor.demo.provider;
 
 import io.github.jamienlu.discorridor.spring.boot.autoconfigure.DiscorridorAutoConfigure;
-import io.github.jamienlu.discorridor.spring.boot.autoconfigure.process.ProviderHttpServer;
-import io.github.jamienlu.discorridor.core.meta.ServiceMeta;
+import io.github.jamienlu.discorridor.spring.boot.autoconfigure.process.ProviderServer;
+import io.github.jamienlu.discorridor.common.meta.ServiceMeta;
 import com.alibaba.fastjson2.JSON;
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class DlscorridorDemoProviderApplication {
     @Bean
     public ApplicationRunner getRunner() {
         return x -> {
-            ProviderHttpServer providerController = applicationContext.getBean(ProviderHttpServer.class);
+            ProviderServer providerController = applicationContext.getBean(ProviderServer.class);
         };
     }
 

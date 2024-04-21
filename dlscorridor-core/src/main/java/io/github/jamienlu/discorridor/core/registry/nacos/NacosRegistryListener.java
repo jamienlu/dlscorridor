@@ -1,7 +1,7 @@
 package io.github.jamienlu.discorridor.core.registry.nacos;
 
-import io.github.jamienlu.discorridor.core.meta.InstanceMeta;
-import io.github.jamienlu.discorridor.core.meta.ServiceMeta;
+import io.github.jamienlu.discorridor.common.meta.InstanceMeta;
+import io.github.jamienlu.discorridor.common.meta.ServiceMeta;
 import io.github.jamienlu.discorridor.core.registry.RegistryCenterListener;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Slf4j
 public class NacosRegistryListener implements RegistryCenterListener {
-    private NacosRegistryEvent registryEvent;
+    private final NacosRegistryEvent registryEvent;
 
     public NacosRegistryListener(NacosRegistryEvent registryEvent) {
         this.registryEvent = registryEvent;

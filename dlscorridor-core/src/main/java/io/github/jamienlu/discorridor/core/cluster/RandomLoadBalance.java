@@ -1,7 +1,6 @@
 package io.github.jamienlu.discorridor.core.cluster;
 
-import io.github.jamienlu.discorridor.core.meta.InstanceMeta;
-import org.apache.commons.collections.CollectionUtils;
+import io.github.jamienlu.discorridor.common.meta.InstanceMeta;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -14,7 +13,7 @@ public class RandomLoadBalance implements LoadBalancer {
     private final SecureRandom random = new SecureRandom();
     @Override
     public InstanceMeta choose(List<InstanceMeta> providers) {
-        if (CollectionUtils.isEmpty(providers)) {
+        if (providers == null || providers.isEmpty()) {
             return null;
         } else if (providers.size() == 1) {
             return providers.get(0);

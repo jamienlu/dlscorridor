@@ -3,7 +3,7 @@ package io.github.jamienlu.discorridor.core.api;
 import io.github.jamienlu.discorridor.core.cluster.LoadBalancer;
 import io.github.jamienlu.discorridor.core.cluster.Router;
 import io.github.jamienlu.discorridor.core.filter.FilterChain;
-import io.github.jamienlu.discorridor.core.transform.RpcTransform;
+import io.github.jamienlu.transform.api.RpcTransform;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

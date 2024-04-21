@@ -1,6 +1,6 @@
 package io.github.jamienlu.discorridor.core.cluster;
 
-import io.github.jamienlu.discorridor.core.meta.InstanceMeta;
+import io.github.jamienlu.discorridor.common.meta.InstanceMeta;
 
 import java.util.List;
 

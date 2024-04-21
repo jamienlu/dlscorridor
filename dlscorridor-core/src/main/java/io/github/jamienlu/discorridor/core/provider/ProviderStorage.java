@@ -1,7 +1,7 @@
 package io.github.jamienlu.discorridor.core.provider;
 
 import io.github.jamienlu.discorridor.core.meta.ProviderMeta;
-import io.github.jamienlu.discorridor.core.meta.ServiceMeta;
+import io.github.jamienlu.discorridor.common.meta.ServiceMeta;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,11 +16,11 @@ public class ProviderStorage {
     /**
      * 服务注册信息  注册中心
      */
-    private List<ServiceMeta> skeltonRegs = new ArrayList<>();
+    private final List<ServiceMeta> skeltonRegs = new ArrayList<>();
     /**
      * 服务调用  被远端调用反射执行  接口全类名 -> 方法签名 -> 服务对象
      */
-    private Map<String, Map<String,ProviderMeta>> skeltonInvokers = new HashMap<>();
+    private final Map<String, Map<String,ProviderMeta>> skeltonInvokers = new HashMap<>();
 
     public void storage(List<ServiceMeta> regs, Map<String, Map<String,ProviderMeta>> invokers) {
         skeltonRegs.addAll(regs);

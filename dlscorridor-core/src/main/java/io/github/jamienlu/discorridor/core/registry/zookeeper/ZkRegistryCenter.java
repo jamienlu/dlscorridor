@@ -1,15 +1,14 @@
 package io.github.jamienlu.discorridor.core.registry.zookeeper;
 
-import io.github.jamienlu.discorridor.core.constant.MetaConstant;
-import io.github.jamienlu.discorridor.core.exception.RpcException;
-import io.github.jamienlu.discorridor.core.meta.InstanceMeta;
-import io.github.jamienlu.discorridor.core.meta.ServiceMeta;
+import io.github.jamienlu.discorridor.common.constant.MetaConstant;
+import io.github.jamienlu.discorridor.common.exception.RpcException;
+import io.github.jamienlu.discorridor.common.meta.InstanceMeta;
+import io.github.jamienlu.discorridor.common.meta.ServiceMeta;
 import io.github.jamienlu.discorridor.core.registry.RegistryCenter;
 import io.github.jamienlu.discorridor.core.registry.RegistryCenterListener;
 import io.github.jamienlu.discorridor.core.util.VersionUtil;
 import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.CuratorCache;
 import org.apache.curator.framework.recipes.cache.CuratorCacheListener;
@@ -38,7 +37,7 @@ public class ZkRegistryCenter implements RegistryCenter {
         listeners.add(listener);
     }
     private void listenerEvent(Consumer<RegistryCenterListener> consumer) {
-        if (CollectionUtils.isNotEmpty(listeners)) {
+        if (!listeners.isEmpty()) {
             for (RegistryCenterListener listener : listeners) {
                 consumer.accept(listener);
             }

@@ -1,8 +1,8 @@
 package io.github.jamienlu.discorridor.core.filter;
 
-import io.github.jamienlu.discorridor.core.api.RpcInvokeHandler;
-import io.github.jamienlu.discorridor.core.api.RpcRequest;
-import io.github.jamienlu.discorridor.core.api.RpcResponse;
+import io.github.jamienlu.discorridor.common.api.RpcInvokeHandler;
+import io.github.jamienlu.discorridor.common.api.RpcRequest;
+import io.github.jamienlu.discorridor.common.api.RpcResponse;
 /**
  * @author jamieLu
  * @create 2024-03-17

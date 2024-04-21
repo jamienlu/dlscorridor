@@ -5,7 +5,7 @@ import cn.jamie.discorridor.demo.api.UserService;
 import io.github.jamienlu.discorridor.core.annotation.JMProvider;
 import io.github.jamienlu.discorridor.core.annotation.RpcService;
 import io.github.jamienlu.discorridor.core.api.RpcContext;
-import io.github.jamienlu.discorridor.core.exception.RpcException;
+import io.github.jamienlu.discorridor.common.exception.RpcException;
 import com.alibaba.nacos.shaded.com.google.common.collect.Lists;
 
 import java.util.List;

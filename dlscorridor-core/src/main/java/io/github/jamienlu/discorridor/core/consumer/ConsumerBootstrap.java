@@ -2,11 +2,11 @@ package io.github.jamienlu.discorridor.core.consumer;
 
 import io.github.jamienlu.discorridor.core.annotation.JMConsumer;
 import io.github.jamienlu.discorridor.core.filter.FilterChain;
-import io.github.jamienlu.discorridor.core.meta.InstanceMeta;
-import io.github.jamienlu.discorridor.core.meta.ServiceMeta;
+import io.github.jamienlu.discorridor.common.meta.InstanceMeta;
+import io.github.jamienlu.discorridor.common.meta.ServiceMeta;
 import io.github.jamienlu.discorridor.core.registry.RegistryCenter;
 import io.github.jamienlu.discorridor.core.api.RpcContext;
-import io.github.jamienlu.discorridor.core.util.RpcReflectUtil;
+import io.github.jamienlu.discorridor.common.util.ReflectUtil;
 import com.alibaba.fastjson2.JSON;
 import jakarta.annotation.PreDestroy;
 import lombok.Data;
@@ -52,7 +52,7 @@ public class ConsumerBootstrap implements ApplicationContextAware {
         Arrays.stream(beanNames).filter(x -> !x.startsWith("java.") && !x.startsWith("org.springframework"))
             .forEach(beanName -> {
                 Object bean = applicationContext.getBean(beanName);
-                List<Field> fields = RpcReflectUtil.findAnnotationFields(bean.getClass(),JMConsumer.class);
+                List<Field> fields = ReflectUtil.findAnnotationFields(bean.getClass(),JMConsumer.class);
                 fields.forEach(field -> {
                     Class<?> service = field.getType();
                     Object consumer = stub.computeIfAbsent(service.getCanonicalName(),

@@ -52,6 +52,8 @@
         <module>discorridor-demo-mix</module>
         <module>discorridor-spring-boot</module>
         <module>dlscorridor-serialization</module>
+        <module>discorridor-transform</module>
+        <module>discorridor-common</module>
     </modules>
 
     <build>

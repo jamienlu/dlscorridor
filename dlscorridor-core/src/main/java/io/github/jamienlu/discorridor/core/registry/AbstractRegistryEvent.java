@@ -1,8 +1,8 @@
 package io.github.jamienlu.discorridor.core.registry;
 
-import io.github.jamienlu.discorridor.core.constant.MetaConstant;
-import io.github.jamienlu.discorridor.core.meta.InstanceMeta;
-import io.github.jamienlu.discorridor.core.meta.ServiceMeta;
+import io.github.jamienlu.discorridor.common.constant.MetaConstant;
+import io.github.jamienlu.discorridor.common.meta.InstanceMeta;
+import io.github.jamienlu.discorridor.common.meta.ServiceMeta;
 import io.github.jamienlu.discorridor.core.util.VersionUtil;
 import lombok.extern.slf4j.Slf4j;
 

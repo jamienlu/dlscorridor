@@ -1,6 +1,6 @@
 package io.github.jamienlu.discorridor.core.util;
 
-import io.github.jamienlu.discorridor.core.api.RpcResponse;
+import io.github.jamienlu.discorridor.common.api.RpcResponse;
 
 /**
  * @author jamieLu

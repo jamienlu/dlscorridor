@@ -44,11 +44,6 @@
             <version>1.8.0</version>
         </dependency>
         <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-            <version>1.9.4</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-client</artifactId>
             <version>5.1.0</version>
@@ -92,7 +87,17 @@
         </dependency>
         <dependency>
             <groupId>io.github.jamienlu</groupId>
+            <artifactId>discorridor-common</artifactId>
+            <version>${rpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jamienlu</groupId>
             <artifactId>dlscorridor-serialization</artifactId>
+            <version>${rpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jamienlu</groupId>
+            <artifactId>discorridor-transform</artifactId>
             <version>${rpc.version}</version>
         </dependency>
     </dependencies>

@@ -3,4 +3,4 @@ io.github.jamienlu.discorridor.spring.boot.autoconfigure.RegistryConfiguration
 io.github.jamienlu.discorridor.spring.boot.autoconfigure.ProviderAutoConfigure
 io.github.jamienlu.discorridor.spring.boot.autoconfigure.ConsumerAutoConfigure
 io.github.jamienlu.discorridor.spring.boot.autoconfigure.WebConfig
-io.github.jamienlu.discorridor.spring.boot.autoconfigure.process.ProviderHttpServer
+io.github.jamienlu.discorridor.spring.boot.autoconfigure.process.ProviderServer

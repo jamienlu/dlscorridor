@@ -1,7 +1,7 @@
 package io.github.jamienlu.discorridor.core.cluster;
 
-import io.github.jamienlu.discorridor.core.constant.MetaConstant;
-import io.github.jamienlu.discorridor.core.meta.InstanceMeta;
+import io.github.jamienlu.discorridor.common.constant.MetaConstant;
+import io.github.jamienlu.discorridor.common.meta.InstanceMeta;
 import lombok.extern.slf4j.Slf4j;
 
 import java.security.SecureRandom;

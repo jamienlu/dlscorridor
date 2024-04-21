@@ -2,13 +2,13 @@ package io.github.jamienlu.discorridor.core.provider;
 
 import io.github.jamienlu.discorridor.core.annotation.JMProvider;
 import io.github.jamienlu.discorridor.core.annotation.RpcService;
-import io.github.jamienlu.discorridor.core.meta.InstanceMeta;
-import io.github.jamienlu.discorridor.core.meta.ServiceMeta;
+import io.github.jamienlu.discorridor.common.meta.InstanceMeta;
+import io.github.jamienlu.discorridor.common.meta.ServiceMeta;
 import io.github.jamienlu.discorridor.core.registry.RegistryCenter;
 import io.github.jamienlu.discorridor.core.meta.ProviderMeta;
 import io.github.jamienlu.discorridor.core.util.RpcMethodUtil;
-import io.github.jamienlu.discorridor.core.util.RpcReflectUtil;
-import io.github.jamienlu.discorridor.core.util.ScanPackageUtil;
+import io.github.jamienlu.discorridor.common.util.ReflectUtil;
+import io.github.jamienlu.discorridor.common.util.ScanPackageUtil;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +58,7 @@ public class ProviderBootstrap implements ApplicationContextAware {
         Map<String, Map<String, ProviderMeta>> skeltonInvokers = new HashMap<>();
         List<Class<?>> stubImpls = ScanPackageUtil.scanClass("", JMProvider.class);
         stubImpls.forEach(stubImpl ->{
-            List<Class<?>> skeltonInterfaces = RpcReflectUtil.findAnnotationInterfaces(stubImpl, RpcService.class);
+            List<Class<?>> skeltonInterfaces = ReflectUtil.findAnnotationInterfaces(stubImpl, RpcService.class);
             skeltonInterfaces.forEach(skeltonInterface -> {
                 ServiceMeta skltonMeta = ServiceMeta.builder().env(serviceMeta.getEnv()).namespace(serviceMeta.getNamespace()).app(serviceMeta.getApp())
                         .name(skeltonInterface.getCanonicalName()).group(serviceMeta.getGroup()).version(serviceMeta.getVersion()).parameters(serviceMeta.getParameters()).build();
@@ -68,7 +68,7 @@ public class ProviderBootstrap implements ApplicationContextAware {
                         // 过滤一些不提供调用的方法
                         .filter(method -> !RpcMethodUtil.notPermissionMethod(method.getName()))
                         .forEach(method -> {
-                            String methodSign = RpcReflectUtil.analysisMethodSign(method);
+                            String methodSign = ReflectUtil.analysisMethodSign(method);
                             Object stubInstance;
                             try {
                                 stubInstance = stubImpl.getConstructor().newInstance();

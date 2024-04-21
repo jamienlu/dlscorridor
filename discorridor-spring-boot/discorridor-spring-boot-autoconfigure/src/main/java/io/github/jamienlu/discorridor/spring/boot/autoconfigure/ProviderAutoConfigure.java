@@ -1,14 +1,14 @@
 package io.github.jamienlu.discorridor.spring.boot.autoconfigure;
 
-import io.github.jamienlu.discorridor.core.meta.InstanceMeta;
-import io.github.jamienlu.discorridor.core.meta.ServiceMeta;
+import io.github.jamienlu.discorridor.common.meta.InstanceMeta;
+import io.github.jamienlu.discorridor.common.meta.ServiceMeta;
 import io.github.jamienlu.discorridor.core.provider.ProviderBootstrap;
 import io.github.jamienlu.discorridor.core.provider.ProviderInvoker;
-import io.github.jamienlu.discorridor.core.provider.ProviderNettyServer;
+import io.github.jamienlu.transform.netty.ProviderNettyServer;
 import io.github.jamienlu.discorridor.core.provider.ProviderStorage;
 import io.github.jamienlu.discorridor.core.registry.RegistryCenter;
 import io.github.jamienlu.discorridor.serialization.api.SerializationService;
-import io.github.jamienlu.discorridor.core.transform.netty.NettyConf;
+import io.github.jamienlu.transform.netty.NettyConf;
 import io.github.jamienlu.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;

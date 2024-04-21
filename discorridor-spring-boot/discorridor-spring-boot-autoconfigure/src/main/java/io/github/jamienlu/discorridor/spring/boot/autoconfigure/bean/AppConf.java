@@ -1,6 +1,6 @@
 package io.github.jamienlu.discorridor.spring.boot.autoconfigure.bean;
 
-import io.github.jamienlu.discorridor.core.constant.MetaConstant;
+import io.github.jamienlu.discorridor.common.constant.MetaConstant;
 import lombok.Data;
 
 /**

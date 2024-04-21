@@ -12,6 +12,7 @@
     <version>${rpc.version}</version>
     <name>dlscorridor-serialization</name>
     <description>dlscorridor-serialization</description>
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -33,6 +34,11 @@
             <groupId>io.protostuff</groupId>
             <artifactId>protostuff-runtime</artifactId>
             <version>1.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jamienlu</groupId>
+            <artifactId>discorridor-common</artifactId>
+            <version>${rpc.version}</version>
         </dependency>
     </dependencies>
 </project>

@@ -2,13 +2,13 @@ package io.github.jamienlu.discorridor.spring.boot.autoconfigure;
 
 import io.github.jamienlu.discorridor.spring.boot.autoconfigure.bean.AppConf;
 import io.github.jamienlu.discorridor.spring.boot.autoconfigure.process.ApolloConfigChanged;
-import io.github.jamienlu.discorridor.core.constant.MetaConstant;
-import io.github.jamienlu.discorridor.core.meta.ServiceMeta;
+import io.github.jamienlu.discorridor.common.constant.MetaConstant;
+import io.github.jamienlu.discorridor.common.meta.ServiceMeta;
 import io.github.jamienlu.discorridor.serialization.api.SerializationService;
 import io.github.jamienlu.discorridor.serialization.service.ProtobufSerializer;
 import io.github.jamienlu.discorridor.serialization.service.FastJson2Serializer;
-import io.github.jamienlu.discorridor.core.transform.http.HttpConf;
-import io.github.jamienlu.discorridor.core.transform.netty.NettyConf;
+import io.github.jamienlu.transform.http.HttpConf;
+import io.github.jamienlu.transform.netty.NettyConf;
 import io.github.jamienlu.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst;
 import lombok.Data;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

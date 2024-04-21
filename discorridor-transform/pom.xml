@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.jamienlu</groupId>
+        <artifactId>dlscorridor</artifactId>
+        <version>${rpc.version}</version>
+    </parent>
+
+    <artifactId>discorridor-transform</artifactId>
+    <version>${rpc.version}</version>
+    <name>dlscorridor-transform</name>
+    <description>dlscorridor-transform</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+            <version>1.18.30</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.100.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.12.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jamienlu</groupId>
+            <artifactId>discorridor-common</artifactId>
+            <version>${rpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jamienlu</groupId>
+            <artifactId>dlscorridor-serialization</artifactId>
+            <version>${rpc.version}</version>
+        </dependency>
+    </dependencies>
+</project>
