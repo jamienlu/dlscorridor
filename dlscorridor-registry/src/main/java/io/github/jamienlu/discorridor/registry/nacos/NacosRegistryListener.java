@@ -1,8 +1,8 @@
-package io.github.jamienlu.discorridor.core.registry.nacos;
+package io.github.jamienlu.discorridor.registry.nacos;
 
 import io.github.jamienlu.discorridor.common.meta.InstanceMeta;
 import io.github.jamienlu.discorridor.common.meta.ServiceMeta;
-import io.github.jamienlu.discorridor.core.registry.RegistryCenterListener;
+import io.github.jamienlu.discorridor.registry.api.RegistryCenterListener;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;

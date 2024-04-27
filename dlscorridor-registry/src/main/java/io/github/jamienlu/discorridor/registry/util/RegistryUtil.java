@@ -1,4 +1,4 @@
-package io.github.jamienlu.discorridor.core.registry;
+package io.github.jamienlu.discorridor.registry.util;
 
 import io.github.jamienlu.discorridor.common.meta.ServiceMeta;
 

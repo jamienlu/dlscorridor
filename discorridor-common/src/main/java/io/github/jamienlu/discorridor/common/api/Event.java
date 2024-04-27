@@ -1,4 +1,4 @@
-package io.github.jamienlu.discorridor.core.api;
+package io.github.jamienlu.discorridor.common.api;
 
 /**
  * @author jamieLu

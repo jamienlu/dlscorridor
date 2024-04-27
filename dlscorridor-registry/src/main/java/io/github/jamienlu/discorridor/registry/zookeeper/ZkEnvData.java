@@ -1,10 +1,9 @@
-package io.github.jamienlu.discorridor.core.registry.zookeeper;
+package io.github.jamienlu.discorridor.registry.zookeeper;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
 
 /**
  * @author jamieLu

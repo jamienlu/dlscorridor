@@ -1,12 +1,12 @@
-package io.github.jamienlu.discorridor.core.registry.zookeeper;
+package io.github.jamienlu.discorridor.registry.zookeeper;
 
 import io.github.jamienlu.discorridor.common.constant.MetaConstant;
 import io.github.jamienlu.discorridor.common.exception.RpcException;
 import io.github.jamienlu.discorridor.common.meta.InstanceMeta;
 import io.github.jamienlu.discorridor.common.meta.ServiceMeta;
-import io.github.jamienlu.discorridor.core.registry.RegistryCenter;
-import io.github.jamienlu.discorridor.core.registry.RegistryCenterListener;
-import io.github.jamienlu.discorridor.core.util.VersionUtil;
+import io.github.jamienlu.discorridor.registry.api.RegistryCenter;
+import io.github.jamienlu.discorridor.registry.api.RegistryCenterListener;
+import io.github.jamienlu.discorridor.registry.util.VersionUtil;
 import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;

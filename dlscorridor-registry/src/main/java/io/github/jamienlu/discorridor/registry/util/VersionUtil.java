@@ -1,4 +1,4 @@
-package io.github.jamienlu.discorridor.core.util;
+package io.github.jamienlu.discorridor.registry.util;
 
 /**
  * 版本号算法

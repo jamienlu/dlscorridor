@@ -1,7 +1,7 @@
-package io.github.jamienlu.discorridor.core.registry.zookeeper;
+package io.github.jamienlu.discorridor.registry.zookeeper;
 
-import io.github.jamienlu.discorridor.core.registry.AbstractRegistryEvent;
-import io.github.jamienlu.discorridor.core.registry.RegistryEvent;
+import io.github.jamienlu.discorridor.registry.api.AbstractRegistryEvent;
+import io.github.jamienlu.discorridor.registry.api.RegistryEvent;
 import lombok.extern.slf4j.Slf4j;
 
 /**

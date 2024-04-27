@@ -54,6 +54,7 @@
         <module>dlscorridor-serialization</module>
         <module>discorridor-transform</module>
         <module>discorridor-common</module>
+        <module>dlscorridor-registry</module>
     </modules>
 
     <build>

@@ -1,4 +1,4 @@
-package io.github.jamienlu.discorridor.core.registry.nacos;
+package io.github.jamienlu.discorridor.registry.nacos;
 
 import io.github.jamienlu.discorridor.common.constant.MetaConstant;
 import io.github.jamienlu.discorridor.common.meta.InstanceMeta;

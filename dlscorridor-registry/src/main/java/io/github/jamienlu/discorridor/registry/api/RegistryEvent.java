@@ -1,6 +1,6 @@
-package io.github.jamienlu.discorridor.core.registry;
+package io.github.jamienlu.discorridor.registry.api;
 
-import io.github.jamienlu.discorridor.core.api.Event;
+import io.github.jamienlu.discorridor.common.api.Event;
 import io.github.jamienlu.discorridor.common.meta.InstanceMeta;
 import io.github.jamienlu.discorridor.common.meta.ServiceMeta;
 

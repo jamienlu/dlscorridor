@@ -6,7 +6,7 @@ import io.github.jamienlu.discorridor.core.provider.ProviderBootstrap;
 import io.github.jamienlu.discorridor.core.provider.ProviderInvoker;
 import io.github.jamienlu.transform.netty.ProviderNettyServer;
 import io.github.jamienlu.discorridor.core.provider.ProviderStorage;
-import io.github.jamienlu.discorridor.core.registry.RegistryCenter;
+import io.github.jamienlu.discorridor.registry.api.RegistryCenter;
 import io.github.jamienlu.discorridor.serialization.api.SerializationService;
 import io.github.jamienlu.transform.netty.NettyConf;
 import io.github.jamienlu.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst;

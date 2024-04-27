@@ -1,8 +1,8 @@
-package io.github.jamienlu.discorridor.core.registry.zookeeper;
+package io.github.jamienlu.discorridor.registry.zookeeper;
 
 import io.github.jamienlu.discorridor.common.meta.InstanceMeta;
 import io.github.jamienlu.discorridor.common.meta.ServiceMeta;
-import io.github.jamienlu.discorridor.core.registry.RegistryCenterListener;
+import io.github.jamienlu.discorridor.registry.api.RegistryCenterListener;
 import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 

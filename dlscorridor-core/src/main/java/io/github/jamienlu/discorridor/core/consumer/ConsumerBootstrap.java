@@ -4,7 +4,7 @@ import io.github.jamienlu.discorridor.core.annotation.JMConsumer;
 import io.github.jamienlu.discorridor.core.filter.FilterChain;
 import io.github.jamienlu.discorridor.common.meta.InstanceMeta;
 import io.github.jamienlu.discorridor.common.meta.ServiceMeta;
-import io.github.jamienlu.discorridor.core.registry.RegistryCenter;
+import io.github.jamienlu.discorridor.registry.api.RegistryCenter;
 import io.github.jamienlu.discorridor.core.api.RpcContext;
 import io.github.jamienlu.discorridor.common.util.ReflectUtil;
 import com.alibaba.fastjson2.JSON;

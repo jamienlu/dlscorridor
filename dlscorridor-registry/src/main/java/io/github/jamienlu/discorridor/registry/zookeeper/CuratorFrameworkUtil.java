@@ -1,4 +1,4 @@
-package io.github.jamienlu.discorridor.core.registry.zookeeper;
+package io.github.jamienlu.discorridor.registry.zookeeper;
 
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;

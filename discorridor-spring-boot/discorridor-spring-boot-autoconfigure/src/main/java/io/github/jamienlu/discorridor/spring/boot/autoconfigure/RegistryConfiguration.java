@@ -1,10 +1,10 @@
 package io.github.jamienlu.discorridor.spring.boot.autoconfigure;
 
 import io.github.jamienlu.discorridor.spring.boot.autoconfigure.bean.RegistryConf;
-import io.github.jamienlu.discorridor.core.registry.RegistryCenter;
-import io.github.jamienlu.discorridor.core.registry.nacos.NacosRegistryCenter;
-import io.github.jamienlu.discorridor.core.registry.zookeeper.ZkEnvData;
-import io.github.jamienlu.discorridor.core.registry.zookeeper.ZkRegistryCenter;
+import io.github.jamienlu.discorridor.registry.api.RegistryCenter;
+import io.github.jamienlu.discorridor.registry.nacos.NacosRegistryCenter;
+import io.github.jamienlu.discorridor.registry.zookeeper.ZkEnvData;
+import io.github.jamienlu.discorridor.registry.zookeeper.ZkRegistryCenter;
 import io.github.jamienlu.discorridor.spring.boot.autoconfigure.constant.AutoConfigurationConst;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

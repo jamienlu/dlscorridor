@@ -1,9 +1,10 @@
-package io.github.jamienlu.discorridor.core.registry;
+package io.github.jamienlu.discorridor.registry.api;
 
 import io.github.jamienlu.discorridor.common.constant.MetaConstant;
 import io.github.jamienlu.discorridor.common.meta.InstanceMeta;
 import io.github.jamienlu.discorridor.common.meta.ServiceMeta;
-import io.github.jamienlu.discorridor.core.util.VersionUtil;
+import io.github.jamienlu.discorridor.registry.util.VersionUtil;
+import io.github.jamienlu.discorridor.registry.util.RegistryUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
