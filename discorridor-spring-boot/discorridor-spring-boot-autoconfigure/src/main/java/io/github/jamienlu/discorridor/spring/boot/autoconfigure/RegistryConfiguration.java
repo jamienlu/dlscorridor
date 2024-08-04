@@ -31,7 +31,7 @@ public class RegistryConfiguration {
                 .build();
             registryCenter = new ZkRegistryCenter(zkEnvData);
         } else if (meta.getType().equals("nacos")) {
-            registryCenter = new NacosRegistryCenter(meta.getUrl());
+            registryCenter = new NacosRegistryCenter(meta.getUrl(), meta.getUsername(),meta.getPassword());
         } else {
             // 不指定类型使用zk
             ZkEnvData zkEnvData = ZkEnvData.builder().url(meta.getUrl()).namespace(meta.getNamespace()).baseTime(meta.getOverTime()).maxRetries(meta.getRetryCount())

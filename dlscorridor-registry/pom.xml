@@ -48,6 +48,11 @@
             <version>2.3.1</version>
         </dependency>
         <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>jraft-core</artifactId>
+            <version>1.3.14</version>
+        </dependency>
+        <dependency>
             <groupId>io.github.jamienlu</groupId>
             <artifactId>discorridor-common</artifactId>
             <version>${rpc.version}</version>

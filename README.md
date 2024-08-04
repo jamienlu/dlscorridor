@@ -75,7 +75,7 @@ discorridor:
   registry:
     env:
       namespace: public
-      url: 192.168.0.101:2181
+      url: 192.168.0.100:2181
       over-time: 1000
       retry-count: 3
   provider:
@@ -105,7 +105,7 @@ discorridor:
   registry:
     env:
       namespace: public
-      url: 192.168.0.101:2181
+      url: 192.168.0.100:2181
       over-time: 1000
       retry-count: 3
   consumer:

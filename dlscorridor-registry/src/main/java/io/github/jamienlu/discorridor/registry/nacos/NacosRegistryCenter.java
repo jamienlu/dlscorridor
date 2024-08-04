@@ -1,5 +1,6 @@
 package io.github.jamienlu.discorridor.registry.nacos;
 
+import com.alibaba.nacos.api.PropertyKeyConst;
 import io.github.jamienlu.discorridor.common.constant.MetaConstant;
 import io.github.jamienlu.discorridor.common.exception.RpcException;
 import io.github.jamienlu.discorridor.common.meta.InstanceMeta;
@@ -18,6 +19,7 @@ import com.alibaba.nacos.common.utils.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -28,11 +30,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class NacosRegistryCenter implements RegistryCenter {
     private final String serverAddress;
+    private final String username;
+    private final String password;
     private NamingService namingService;
     private final NacosRegistryEvent nacosRegistryEvent = new NacosRegistryEvent();
     private final RegistryCenterListener registryCenterListener;
-    public NacosRegistryCenter(String serverAddress) {
+    public NacosRegistryCenter(String serverAddress, String username, String password) {
         this.serverAddress = serverAddress;
+        this.username = username;
+        this.password = password;
         registryCenterListener = new NacosRegistryListener(nacosRegistryEvent);
     }
     private void listenerEvent(Consumer<RegistryCenterListener> consumer) {
@@ -42,7 +48,12 @@ public class NacosRegistryCenter implements RegistryCenter {
     @Override
     public void start() {
         try {
-            namingService = NamingFactory.createNamingService(serverAddress);
+            Properties properties = new Properties();
+            properties.setProperty(PropertyKeyConst.SERVER_ADDR, serverAddress);
+            properties.setProperty(PropertyKeyConst.USERNAME, username);
+            properties.setProperty(PropertyKeyConst.PASSWORD, password);
+            namingService = NamingFactory.createNamingService(properties);
+
         } catch (NacosException e) {
             log.error("start nacos server error", e);
             throw new RpcException(RpcException.NO_NACOS_SERVER);

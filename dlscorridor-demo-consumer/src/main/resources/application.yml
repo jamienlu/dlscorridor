@@ -30,14 +30,14 @@ discorridor:
 #    meta:
 #      type: zk
 #      namespace: public
-#      url: 192.168.0.101:2181
+#      url: 192.168.0.100:2181
 #      over-time: 1000
 #      retry-count: 3
   registry:
     meta:
       type: nacos
       namespace: public
-      url: 192.168.0.101:8848,192.168.0.101:8849,192.168.0.101:8850
+      url: 192.168.0.100:8848
       over-time: 1000
       retry-count: 3
   consumer:
@@ -62,7 +62,7 @@ app:
 apollo:
   cacheDir: /temp/conf/data                   #配置本地配置缓存目录
   cluster: default                           #指定使用哪个集群的配置
-  meta: http://192.168.0.101:8080          #DEV环境配置中心地址
+  meta: http://192.168.0.100:8080          #DEV环境配置中心地址
   autoUpdateInjectedSpringProperties: true   #是否开启 Spring 参数自动更新
   bootstrap:
     enabled: true                            #是否开启 Apollo
